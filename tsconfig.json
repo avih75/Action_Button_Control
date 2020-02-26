@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "target": "es5",
+        "rootDir": "./scripts",
+        "types": [
+            "jquery",
+            "q",
+            "vss-web-extension-sdk"
+        ],
+        "lib": [
+            "dom",
+            "es5"
+        ]
+    }
+}

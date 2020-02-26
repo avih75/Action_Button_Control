@@ -1,0 +1,106 @@
+{
+    "manifestVersion": 1,
+    "id": "Action Button",
+    "version": "0.1.1",
+    "name": "TFS Action Button",
+    "scopes": [
+        "vso.work",
+        "vso.work_write"
+    ],
+    "description": "Runs a code from the buttonAction.dll file",
+    "publisher": "AviHadad",
+    "icons": {
+        "default": "img/logo.png"
+    },
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "tags": [
+        "Work Item",
+        "Work Item control",
+        "Usability",
+        "Button",
+        "Aggrigator",
+        "Action"
+    ],
+    "content": {
+        "details": {
+            "path": "details.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/avih75/TFS_ACction_Button"
+    },
+    "links": {
+        "support": {
+            "uri": "https://github.com/avih75/TFS_ACction_Button/issues"
+        },
+        "learn": {
+            "uri": "https://github.com/avih75/TFS_ACction_Button/blob/master/README.md"
+        },
+        "repository": {
+            "uri": "https://github.com/avih75/TFS_ACction_Button"
+        },
+        "issues": {
+            "uri": "https://github.com/avih75/TFS_ACction_Button/issues"
+        }
+    },
+    "files": [
+        {
+            "path": "img",
+            "addressable": true
+        },
+        {
+            "path": "scripts",
+            "addressable": true
+        },
+        {
+            "path": "styles",
+            "addressable": true
+        },
+        {
+            "path": "index.html",
+            "addressable": true
+        }
+    ],
+    "categories": [
+        "Plan and track"
+    ],
+    "contributions": [
+        {
+            "id": "Action Button",
+            "description": "Runs a code from the buttonAction.dll file.",
+            "type": "ms.vss-work-web.work-item-form-control",
+            "targets": [
+                "ms.vss-work-web.work-item-form"
+            ],
+            "properties": {
+                "name": "Plus/minus integer control",
+                "uri": "index.html",
+                "height": 200,
+                "inputs": [ 
+                    {
+                        "id": "DataTransfer",
+                        "name": "DataTransfer",
+                        "description": "The field pass Data from the work item to the Action Code.",
+                        "type": "WorkItemField", 
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
