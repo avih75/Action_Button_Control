@@ -4,7 +4,6 @@ Purpose: This class is being used to get errors from an input parser and
             order to be sent to a view to display them.       
 ***************************************************************************/
 
-
 // shows the errors in the control container rather than the control.
 export class ErrorView {
 

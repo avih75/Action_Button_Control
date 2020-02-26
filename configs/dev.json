@@ -1,5 +1,5 @@
 {
-    "id": "severity-control-dev",
-    "name": "severity Control (dev)",
+    "id": "Action-Button",
+    "name": "TFS Action Button",
     "public": false
 }
