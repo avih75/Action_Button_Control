@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
     "id": "TFS_Action_Button",
-    "version": "1.0.0",
-    "name": "TFS Action Button",
+    "version": "1.0.8",
+    "name": "TFS_Action_Button",
     "scopes": [
         "vso.work",
         "vso.work_write"
@@ -71,7 +71,7 @@
     ],
     "contributions": [
         {
-            "id": "Action Button",
+            "id": "ActionButton",
             "description": "Runs a code from the buttonAction.dll file.",
             "type": "ms.vss-work-web.work-item-form-control",
             "targets": [

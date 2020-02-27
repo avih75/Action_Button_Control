@@ -8,31 +8,4 @@ describe("Model", () => {
         model = new Model('');
     });
 
-    it("correctly initialize value to 0", () => {
-        expect(model.getCurrentValue('')).to.be.deep.equal(0);
-    });
-
-    it("increments 0 to be 1", () => {
-        model.incrementValue();
-        expect(model.getCurrentValue('')).to.be.deep.equal(1);
-    });
-
-    it("decrements 0 to remain at 0", () => {
-        model.decrementValue();
-        expect(model.getCurrentValue('')).to.be.deep.equal(0);
-    });
-
-    it("decrements 1 to be 0", () => {
-        model.setCurrentValue('', '');
-        model.decrementValue();
-        expect(model.getCurrentValue('')).to.be.deep.equal(0);
-    });
-
-    it("decrements 20 twice to be 18", () => {
-        model.setCurrentValue('', '');
-        model.decrementValue();
-        model.decrementValue();
-        expect(model.getCurrentValue('')).to.be.deep.equal(18);
-    });
-
 });

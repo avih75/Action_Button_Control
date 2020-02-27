@@ -6,61 +6,26 @@ import { RedeployTriggerAction } from "ReleaseManagement/Core/Constants";
  * the user to change the value.
  */
 
-export class View {
-    
-    private dataTransferCurVal: string = ""; 
-
+export class View {    
+    private _model: Model; 
     constructor(private model: Model, private onInputChanged: Function, private onUpTick: Function, private onDownTick: Function) {
+         
+        this._model = model;
         this._init();
     }
-
     private _init(): void {
-
         var newLine = $("<br>");        
         $(".container").remove();
         var container = $("<div />");
-        container.addClass("container");     
- 
-        var actionButton = $("<button />"); 
-        var actionLable = $("<Label />")
-        actionLable.addClass("workitemcontrol-label")
-        actionLable.text('Action');  
-        actionButton.click(() => { 
-        }).on("input", (evt: JQueryKeyEventObject) => {
-            this._inputChanged('taskFrequencyField', 'taskFreqClass', evt); 
-        });
-        container.append(actionLable);
+        container.addClass("container");  
+        this.model.list.forEach(element => {           
+        let actionButton = $("<button />");  
+        actionButton.text(element);
+        actionButton.click(() => {this.model._buttonPressed(element);});
+        container.append(newLine);
         container.append(actionButton);
-        container.append(newLine)  
-
+        container.append(newLine) 
+    });  
         $("body").append(container);
-    }
-
-    private _inputChanged(fieldName: string, JQselector: string, evt: JQueryKeyEventObject): void {
-        let newValue = $(evt.target).val()
-        if (newValue!="")
-        {
-            let element= $(evt.target);
-            element.css({
-                background: "rgb(255, 255, 255)"
-            })
-        }
-        if (this.onInputChanged) {
-            this.onInputChanged(newValue, fieldName);
-        }
-    }
-
-    public update(value: string, fieldName: string) {
-        if(fieldName == 'severityField'){
-            this.dataTransferCurVal = String(value);
-            $(".sevClass").val(this.dataTransferCurVal);
-        } 
-    }
-
-    public getCurrentValues() :any{
-        var currentValues = {
-            dataTransfer: $(".dataTransferClass").val()     
-        }
-        return currentValues;
     }
 }

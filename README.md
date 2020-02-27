@@ -11,19 +11,26 @@
 3. Make This Steps : 
     1. Run `npm install` to install required dependencies.
     2. Run `npm install -g grunt` to install a global copy of grunt.
-    3. Check the category value in the vss-extension.json file as "Plan and track" for TFS 2017         or "Azure Boards" for TFS 2019
-    4. Run `grunt package-dev`.
-    5. Navigate to your TFS. and Go to Marketplace. 
-    6. Click "Browse local extensions".
-    7. Scroll down and click on the "Manage Extensions".
-    8. Click "Upload new extension".
-    9. Drag and Drop the generated file from your packaged project (vsix). 
-    10. Click "Upload".
-    13. Hover over the extension when it appears in the list, and click "Install".
+    3. Run `npm install -g tfx-cli`
+    4. Check the category value in the 'vss-extension.json' file 
+        1. "Plan and track" for TFS 2017
+        2. "Azure Boards" for TFS 2019
+    5. Run `grunt package-dev`.
+    6. Navigate to your TFS. and Go to Marketplace. 
+    7. Click "Browse local extensions".
+    8. Scroll down and click on the "Manage Extensions".
+    9. Click "Upload new extension".
+    10. Drag and Drop the generated file from your packaged project (vsix). 
+    11. Click "Upload".
+    12. Hover over the extension when it appears in the list, and click "Install".
 
-You have now installed the extension inside your collection.  You are now able to put the control in the work item form.
+You have now installed the extension inside your collection.  
+You are now able to put the control in the work item form.
 
- A work item type is defined by XML, including the layout of the work item form.  As part of the walkthrough, you will add the control to the layout.  [Read more information on WebLayout XML](https://www.visualstudio.com/docs/work/reference/weblayout-xml-elements).  In this example, we will add the control to the Agile "user story".
+A work item type is defined by XML, including the layout of the work item form.  
+As part of the walkthrough, you will add the control to the layout.  
+[Read more information on WebLayout XML](https://www.visualstudio.com/docs/work/reference/weblayout-xml-elements).  
+In this example, we will add the control to the Agile "user story".
 
 1.  Open the `Developer Command Prompt`.  Export the XML file to your desktop with command shown below.
     ```
@@ -35,17 +42,19 @@ You have now installed the extension inside your collection.  You are now able t
         <!--**********************************Work Item Extensions***************************
 
     Extension:
-        Name: hitcount-control-dev
-        Id: example.hitcount-control-dev
+        Name: Action-Button
+        Id: AviHadad.Action-Button
 
         Control contribution:
-            Id: example.hitcount-control-dev.hitcount-control-contribution
-            Description:
+            Id: AviHadad.Action-Button.ActionButton
+            Description: Runs a code from the buttonAction.dll file.
             Inputs:
-                Id: FieldName
-                Description: The field associated with the control.
-                Type: Field
-                IsRequired: true
+                Id: DataTransfer
+                Description: The field pass Data from the work item to the Action Code.
+			Type: WorkItemField
+			Field Type: Integer; Double; String
+			Data Type: String
+			IsRequired: true
     ```
 
 4. Add an extension tag below the "Work Item Extensions" section as shown below to make your control available to work item form. 
@@ -59,8 +68,9 @@ You have now installed the extension inside your collection.  You are now able t
         -->
 
         <Extensions>
-            <Extension Id="example.hitcount-control-dev" />
+          <Extension Id="AviHadad.Action-Button" />
         </Extensions>
+
      ```
 
 5. Find your extension ID in the "Work Item Extensions" section: 
@@ -82,11 +92,11 @@ You have now installed the extension inside your collection.  You are now able t
         ...
             <Group Id="Planning">
             ...
-                <ControlContribution Label="Priority" Id="<your-control-contribution-id>"
-                    <Inputs>
-                        <Input Id="FieldName" Value="Microsoft.VSTS.Common.Priority" />
-                    </Inputs>
-                </ControlContribution>
+			  <ControlContribution Label="new" Id="AviHadad.Action-Button.ActionButton">
+				<Inputs>
+					<Input Id="FieldName" Value="Microsoft.VSTS.Common.Activity" />
+				</Inputs>
+			  </ControlContribution>
 
                 <Control Label="Risk" Type="FieldControl" FieldName="Microsoft.VSTS.Common.Risk" />
     ```

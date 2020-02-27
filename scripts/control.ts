@@ -11,7 +11,6 @@ import * as Q from "q";
 
 export class Controller {
     private _dataTransferFieldName: string = ""; 
-
     private _inputs: IDictionaryStringTo<string>;
     private _model: Model;
     private _view: View;
@@ -19,11 +18,9 @@ export class Controller {
     constructor() {
         this._initialize();
     }
-
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
         this._dataTransferFieldName = this._inputs["DataTransfer"]; 
-
         WitService.WorkItemFormService.getService().then(
             (service) => {
                 Q.spread(
@@ -33,23 +30,19 @@ export class Controller {
                         this._model = new Model(dataTransferCurVal);
                         this._view = new View(this._model, (val, fieldName) => {
                             this._updateInternal(val, fieldName, true);                             
-                        }, (fieldName) => {
-                            this._model.incrementValue();
-                            this._updateInternal(this._model.getCurrentValue(fieldName), fieldName, false);
-                        }, (fieldName) => {
-                            this._model.decrementValue();
-                            this._updateInternal(this._model.getCurrentValue(fieldName), fieldName, false);
+                        }, (fieldName) => {                            
+                            this._updateInternal(this._model._dataTransferCurVal, fieldName, false);
+                        }, (fieldName) => {                             
+                            this._updateInternal(this._model._dataTransferCurVal, fieldName, false);
                         })
                     }, this._handleError
                 ).then(null, this._handleError);
             },
             this._handleError);
     }
-
     private _handleError(error: string): void {
         new ErrorView(error);
     }
-
     private _updateInternal(value: string, fieldName: string, updateHtml: boolean): any {
         WitService.WorkItemFormService.getService().then(
             (service) => {
@@ -64,9 +57,9 @@ export class Controller {
         );
     }
     private _update(value: string, fieldName: string, updateHtml: boolean): void {
-        this._model.setCurrentValue(value, fieldName);
+         
         if(updateHtml == true){
-            this._view.update(value, fieldName);
+             
         }
     } 
     public getFieldName(): string {
