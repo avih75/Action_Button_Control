@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@types/node": "^13.7.6",
+    "azure-devops-node-api": "^10.1.0",
     "http-proxy-agent": "^4.0.1"
   }
 }

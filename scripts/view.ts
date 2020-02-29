@@ -1,11 +1,7 @@
-import { Model } from "./model";
-import { Actions } from "C:/Users/user/source/repos/ActionsFile";  
+import { Model } from "./model"; 
  
-export class View {    
-    //private _model: Model; 
-    private _action: Actions;
-    constructor(private model: Model){ 
-        //this._model = model;
+export class View {     
+    constructor(private model: Model){  
         this._init();
     }
     private _init(): void {

@@ -1,8 +1,3 @@
-
-/** The class control.ts will orchestrate the classes of InputParser, Model and View
- *  in order to perform the required actions of the extensions. 
- */
-
 import * as WitService from "TFS/WorkItemTracking/Services";
 import { Model } from "./model";
 import { View } from "./view";
