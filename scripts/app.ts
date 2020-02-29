@@ -18,13 +18,7 @@ var provider = () => {
     return {
         onLoaded: (workItemLoadedArgs: IWorkItemLoadedArgs) => {
             control = new Controller();
-        },
-        onFieldChanged: (fieldChangedArgs: IWorkItemFieldChangedArgs) => {
-            var changedValue = fieldChangedArgs.changedFields[control.getFieldName()];
-            if (changedValue !== undefined) {
- 
-            }
-        }
+        }, 
     };
 };
 

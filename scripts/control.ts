@@ -20,25 +20,20 @@ export class Controller {
     }
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
-        this._dataTransferFieldName = this._inputs["DataTransfer"]; 
+        this._dataTransferFieldName = this._inputs["DataTransfer"];  
         WitService.WorkItemFormService.getService().then(
+
             (service) => {
                 Q.spread(
                     [service.getFieldValue(this._dataTransferFieldName)],
-                    (dataTransferCurVal: string) => {                       
-                        this._updateInternal(dataTransferCurVal, 'dataTransferCurVal', true)  
+                    (dataTransferCurVal: string) => {                        
                         this._model = new Model(dataTransferCurVal);
-                        this._view = new View(this._model, (val, fieldName) => {
-                            this._updateInternal(val, fieldName, true);                             
-                        }, (fieldName) => {                            
-                            this._updateInternal(this._model._dataTransferCurVal, fieldName, false);
-                        }, (fieldName) => {                             
-                            this._updateInternal(this._model._dataTransferCurVal, fieldName, false);
-                        })
+                        this._view = new View(this._model)
                     }, this._handleError
                 ).then(null, this._handleError);
             },
-            this._handleError);
+            this._handleError
+        );
     }
     private _handleError(error: string): void {
         new ErrorView(error);
@@ -56,10 +51,8 @@ export class Controller {
             this._handleError
         );
     }
-    private _update(value: string, fieldName: string, updateHtml: boolean): void {
-         
-        if(updateHtml == true){
-             
+    private _update(value: string, fieldName: string, updateHtml: boolean): void {                 
+         if(updateHtml == true){                     
         }
     } 
     public getFieldName(): string {

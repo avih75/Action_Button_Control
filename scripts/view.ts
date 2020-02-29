@@ -1,4 +1,5 @@
 import { Model } from "./model";
+import { Actions } from "C:/Users/user/source/repos/ActionsFile"; 
 import { RedeployTriggerAction } from "ReleaseManagement/Core/Constants";
 
 /**
@@ -8,7 +9,8 @@ import { RedeployTriggerAction } from "ReleaseManagement/Core/Constants";
 
 export class View {    
     private _model: Model; 
-    constructor(private model: Model, private onInputChanged: Function, private onUpTick: Function, private onDownTick: Function) {
+    private _action: Actions;
+    constructor(private model: Model){//}, private onInputChanged: Function, private onUpTick: Function, private onDownTick: Function) {
          
         this._model = model;
         this._init();
@@ -22,7 +24,9 @@ export class View {
         let actionButton = $("<button />");  
         actionButton.text(element);
         actionButton.click(() => {this.model._buttonPressed(element);});
+        // actionButton.click(() => {this._action.ActionCliked(element);});
         container.append(newLine);
+
         container.append(actionButton);
         container.append(newLine) 
     });  
