@@ -7,12 +7,12 @@ export class Model {
      * selected in the Hit Count custom control. This will be updated in View and
      * changes as the user increments and decrements the value.
      */
-    public _dataTransferCurVal: string; 
+    //public _dataTransferCurVal: string; 
     public list: Array<string>;
 
-    constructor(dataTransferCurVal) {
-        this._dataTransferCurVal = dataTransferCurVal; 
-        this.list = dataTransferCurVal.split(",");
+    constructor(dataTransfer) {
+        //this._dataTransferCurVal = dataTransferCurVal; 
+        this.list = dataTransfer.split(",");
     }
  
     public _buttonPressed(pressed: string): void {   
@@ -35,9 +35,7 @@ export class Model {
     private _createNewWit (message:string) :boolean {
         WitService.WorkItemFormService.getService().then(
             (service) => {
-                // let list = service.getFieldValues;
-                 
-            
+                // let list = service.getFieldValues;            
                 service.getFieldValue("Buttons.Button1").then((obj)=>{
                     message += obj.toString();
                     alert(message);

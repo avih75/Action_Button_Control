@@ -26,8 +26,8 @@ export class Controller {
             (service) => {
                 Q.spread(
                     [service.getFieldValue(this._dataTransferFieldName)],
-                    (dataTransferCurVal: string) => {                        
-                        this._model = new Model(dataTransferCurVal);
+                    (dataTransfer: string) => {                        
+                        this._model = new Model(dataTransfer);
                         this._view = new View(this._model)
                     }, this._handleError
                 ).then(null, this._handleError);
