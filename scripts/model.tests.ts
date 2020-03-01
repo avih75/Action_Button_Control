@@ -5,7 +5,7 @@ describe("Model", () => {
     let model: Model;
 
     beforeEach(() => {
-        model = new Model('');
+        model = new Model('','');
     });
 
 });

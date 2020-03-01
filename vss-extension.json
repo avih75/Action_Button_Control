@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "TFS_Action_Button",
-    "version": "1.0.65",
+    "version": "1.0.70",
     "name": "TFS_Action_Button",
     "scopes": [
         "vso.work",
@@ -86,6 +86,23 @@
                         "id": "DataTransfer",
                         "name": "DataTransfer",
                         "description": "The field pass Data from the work item to the Action Code.",
+                        "type": "WorkItemField", 
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "TargetType",
+                        "name": "TargetType",
+                        "description": "The field pass the target work item type.",
                         "type": "WorkItemField", 
                         "properties": {
                             "workItemFieldTypes": [

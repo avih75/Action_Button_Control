@@ -6,6 +6,7 @@ import * as Q from "q";
 
 export class Controller {
     private _dataTransferFieldName: string = ""; 
+    private _targetType: string = "";
     private _inputs: IDictionaryStringTo<string>;
     private _model: Model;
     private _view: View;
@@ -16,12 +17,14 @@ export class Controller {
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
         this._dataTransferFieldName = this._inputs["DataTransfer"];  
+        this._targetType = this._inputs["TargetType"];  
         WitService.WorkItemFormService.getService().then(
             (service) => {
                 Q.spread(
-                    [service.getFieldValue(this._dataTransferFieldName)],
-                    (dataTransfer: string) => {                        
-                        this._model = new Model(dataTransfer);
+                    [service.getFieldValue(this._dataTransferFieldName),
+                     service.getFieldValue(this._targetType)],
+                    (dataTransfer: string,targetType:string) => {                        
+                        this._model = new Model(dataTransfer,targetType);
                         this._view = new View(this._model)
                     }, this._handleError
                 ).then(null, this._handleError);
