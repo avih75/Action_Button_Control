@@ -14,7 +14,7 @@ export class View {
             let actionButton = $("<button />");  
             actionButton.addClass("buttons");
             actionButton.text(element);
-            actionButton.click(() => {this.model._buttonPressed(element);}); 
+            actionButton.click(() => {this.model.buttonPressed(element);}); 
             container.append(newLine);
             container.append(actionButton);
             container.append(newLine) 

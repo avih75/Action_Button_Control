@@ -14,23 +14,18 @@ export class Model {
         this.client = RestClient.getClient();
     }
 
-    public _buttonPressed(pressed: string): void {
-        let message: string = "pressed " + pressed;
+    public buttonPressed(pressed: string): void { 
         switch (pressed) {
             case "Convert to Task": {
-                this.createNewWit(message)
-            }
-            case "CalCulate": {
-                message += " Not Implamented Yet";
+                this.createNewWit()
             }
             default: {
-                message += " Wrong";
+                alert(pressed + " not implamented yet")
             }
         }
     }
     // convert bug to....
-    private createNewWit(message: string) {
-        var flag = false;
+    private createNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues([
@@ -43,12 +38,12 @@ export class Model {
                     "System.Description",
                     "System.FoundIn"
                 ]).then((values) => {
-                    this.createNewWorkItem(message, values);
+                    this.createNewWorkItem(values);
                 })
             });
     }
 
-    private createNewWorkItem(message: string, FieldsList: IDictionaryStringTo<Object>) {
+    private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
         let project: string = FieldsList["System.TeamProject"].toString();
         let type: string = this.workItemType;
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
@@ -72,18 +67,17 @@ export class Model {
                 { "op": "add", "path": "/fields/System.Description", "value": FieldsList["System.Description"] ? FieldsList["System.Description"].toString() : '' },
             ];
         }
-        this.client.createWorkItem(document, project, type).then((newWorkItem) => {
-            message += " " + newWorkItem.id;
-            alert(message);
-            this._closeStateSave();
+        this.client.createWorkItem(document, project, type).then((newWorkItem) => { 
+            alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+            this.closeStateSave();
         });
     }
 
-    private _closeStateSave() {
+    private closeStateSave() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.setFieldValue("System.State", "Closed").then(()=> {
-                    service.save; 
+                service.setFieldValue("System.State", "Closed").then(() => {
+                    service.save;
                 });
             });
     }
