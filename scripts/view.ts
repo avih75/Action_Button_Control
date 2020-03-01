@@ -1,4 +1,4 @@
-import { Model } from "./model"; 
+import { Model } from "./modelll"; 
  
 export class View {     
     constructor(private model: Model){  

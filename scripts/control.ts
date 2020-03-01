@@ -1,5 +1,5 @@
 import * as WitService from "TFS/WorkItemTracking/Services";
-import { Model } from "./model";
+import { Model } from "./modelll";
 import { View } from "./view";
 import { ErrorView } from "./errorView";
 import * as Q from "q";
@@ -17,7 +17,6 @@ export class Controller {
         this._inputs = VSS.getConfiguration().witInputs;
         this._dataTransferFieldName = this._inputs["DataTransfer"];  
         WitService.WorkItemFormService.getService().then(
-
             (service) => {
                 Q.spread(
                     [service.getFieldValue(this._dataTransferFieldName)],

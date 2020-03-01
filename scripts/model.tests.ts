@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Model } from "./model";
+import { Model } from "./modelll";
 
 describe("Model", () => {
     let model: Model;
