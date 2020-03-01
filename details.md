@@ -1,47 +1,45 @@
-> This is currently only available on TFS 2017 or later and Visual Studio Team Services.
+# Make TFS more interactive
 
-![Work Item Form](img/form.png)
+![Layout Customization](img/Form.png)
 
-# Make integer fields more interactive
+# Triger an Action with a single click
 
-![Hit Count Control](img/hitCountControl.png)
+![Hit Count Control](img/ButtonView.png)
 
-# Increase/decrease counters with a single click
+Right now there is only one action, the 'convert work item', it copy the work item Basic fields to new and difrent work item
+
+# How to get started
 
 ![Control keys](img/logo.png)
 
-# How to get started
-## Visual Studio Team Services
+After instaling this extension, download the work item xml.
+And add to fields, one for the buttons (can add several), second for the target type.
 
-Navigate to your work item form customization page and add a plus/minus integer control.
+![Control keys](img/XmlFields.png)
 
-![Layout Customization](img/layoutCustomization.png)
+Add the Extenshion to the Layout.
 
-Edit the ActionFile.dll so it Act as you need.
+![Configuration](img/Extenshion.png)
 
-![Configuration](img/configuration.png)
+Last step, Just add the controler to the layout.
 
-## TFS On-Premise 
+![Configuration](img/Helper.png)
 
-We recommend TFS 2017 RC2 and higher when running this extension.
-
-[Learn more](https://github.com/avih75/TFS_ACction_Button.git/README.md) about how to customize the integer control directly on XML.
+[Learn more](https://github.com/avih75/TFS_Action_Button.git/README.md) 
+about how to customize the control, and add more actions.
 
 # Source code 
 
-The [source](https://github.com/avih75/TFS_ACction_Button.git) for this extension can be found on Github - feel free to take, fork and extend. 
+The [source](https://github.com/avih75/TFS_Action_Button.git) 
+this extension can be found on Github - feel free to take, fork and extend. 
 
 You can also learn how to build your own custom control extension for the work item form [here](https://www.visualstudio.com/en-us/docs/integrate/extensions/develop/custom-control). 
 
-# Contributors
-
-We thank the following contributor(s) for this extension: Alison Chow, Maria McLaughlin and Nelson Troncoso Aldas. 
-
 # Feedback 
 
-We need your feedback! Here are some ways to connect with us:
-
+* You can mail me for any Help.
+* I need your feedback! 
 * Add a review below.
-* Report issues in [GitHub](https://github.com/Microsoft/vsts-extension-integer-control/issues).
+* Report issues in [GitHub](https://github.com/avih75/TFS_Action_Button.git).
 
 > Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.

@@ -16,7 +16,7 @@ export class Model {
 
     public buttonPressed(pressed: string): void { 
         switch (pressed) {
-            case "Convert to Task": {
+            case "Convert Work Item": {
                 this.createNewWit()
             }
             default: {

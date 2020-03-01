@@ -51,10 +51,17 @@ In this example, we will add the control to the Agile "user story".
             Inputs:
                 Id: DataTransfer
                 Description: The field pass Data from the work item to the Action Code.
-			Type: WorkItemField
-			Field Type: Integer; Double; String
-			Data Type: String
-			IsRequired: true
+			    Type: WorkItemField
+			    Field Type: Integer; Double; String
+			    Data Type: String
+			    IsRequired: true
+
+                Id: TargetType
+			    Description: The field pass the target work item type.
+			    Type: WorkItemField
+			    Field Type: Integer; Double; String
+			    Data Type: String
+			    IsRequired: true
     ```
 
 4. Add an extension tag below the "Work Item Extensions" section as shown below to make your control available to work item form. 
@@ -72,8 +79,14 @@ In this example, we will add the control to the Agile "user story".
         </Extensions>
 
      ```
-
-5. Find your extension ID in the "Work Item Extensions" section: 
+5. Add two fields to the xml, one for the buttons list, and the second for the convert work item type
+        <FIELD name="Button1" refname="Buttons.Button1" type="String" syncnamechanges="true">
+            <DEFAULT from="value" value="Convert to Task,Action2" />
+        </FIELD>
+        <FIELD name="TargetType" refname="Buttons.TargetType" type="String" syncnamechanges="true">
+            <DEFAULT from="value" value="Task" />
+        </FIELD>
+6. Find your extension ID in the "Work Item Extensions" section: 
 
     ```XML
         <!--**********************************Work Item Extensions***************************
@@ -84,7 +97,7 @@ In this example, we will add the control to the Agile "user story".
         ...
     ```
 
-6. This extension is a contribution, so you add it with a contribution tag in place of the <Control> tag. This example adds the "ControlContribution" to the "Planning" group.
+7. This extension is a contribution, so you add it with a contribution tag in place of the <Control> tag. This example adds the "ControlContribution" to the "Planning" group.
     ```xml
     <Page Id="Details">
     ...
@@ -94,20 +107,21 @@ In this example, we will add the control to the Agile "user story".
             ...
 			  <ControlContribution Label="new" Id="AviHadad.Action-Button.ActionButton">
 				<Inputs>
-					<Input Id="FieldName" Value="Microsoft.VSTS.Common.Activity" />
+					<Input Id="DataTrasfer" Value="Buttons.Button1" />
+   					<Input Id="TargetType"  Value="Buttons.TargetType" />
 				</Inputs>
 			  </ControlContribution>
 
                 <Control Label="Risk" Type="FieldControl" FieldName="Microsoft.VSTS.Common.Risk" />
     ```
 
-7. Finally, import this *.xml* file, using witadmin.
+8. Finally, import this *.xml* file, using witadmin.
     ```
     witadmin importwitd /collection:CollectionURL /p:Project /f:FileName
     ``` 
 
 ## Make changes to the control
-
+ You may (even should) make your own Action, to add functionality to your TFS, by adding more cases in the switch case in the model, and call your own method..... keep your mind on this, the context on the button is the switch case you should handle.
  If you make changes to your extension files, you need to compile the Typescript and create the *.vsix* file again (steps 4-7 in the "Package & Upload to the marketplace" section).
  
 Instead of re-installing the extension, you can replace the extension with the new *.vsix* package.  Right-click the extension in the "Manage Extensions" page and click "Update".  You do not need to make changes to your XML file again.
