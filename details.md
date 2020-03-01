@@ -19,9 +19,13 @@ And add to fields, one for the buttons (can add several), second for the target 
 
 Add the Extenshion to the Layout.
 
-![Configuration](img/Extenshion.png)
+![Configuration](img/Extension.png)
 
 Last step, Just add the controler to the layout.
+
+![Configuration](img/ViewControl.png)
+
+you can get the data from this place
 
 ![Configuration](img/Helper.png)
 
