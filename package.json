@@ -26,8 +26,8 @@
     "vss-web-extension-sdk": "^5.141.0"
   },
   "name": "tfs-action-button",
-  "private": true,
-  "version": "1.0.0",
+  "private": false,
+  "version": "1.1.0",
   "scripts": {
     "postinstall": "typings install"
   },

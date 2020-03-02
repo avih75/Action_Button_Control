@@ -1,5 +1,5 @@
 {
     "id": "Action-Button",
     "name": "TFS Action Button",
-    "public": false
+    "public": true
 }
