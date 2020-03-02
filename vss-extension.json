@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "TFS-Action-Button",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "name": "TFS Action Button",
     "scopes": [
         "vso.work",
