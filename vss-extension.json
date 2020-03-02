@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
-    "id": "TFS_Action_Button",
-    "version": "1.0.73",
-    "name": "TFS_Action_Button",
+    "id": "TFS-Action-Button",
+    "version": "1.0.77",
+    "name": "TFS Action Button",
     "scopes": [
         "vso.work",
         "vso.work_write"
@@ -32,20 +32,20 @@
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/avih75/TFS_ACction_Button"
+        "uri": "https://github.com/avih75/TFS_Action_Button"
     },
     "links": {
         "support": {
-            "uri": "https://github.com/avih75/TFS_ACction_Button/issues"
+            "uri": "https://github.com/avih75/TFS_Action_Button/issues"
         },
         "learn": {
-            "uri": "https://github.com/avih75/TFS_ACction_Button/blob/master/README.md"
+            "uri": "https://github.com/avih75/TFS_Action_Button/blob/master/README.md"
         },
         "repository": {
-            "uri": "https://github.com/avih75/TFS_ACction_Button"
+            "uri": "https://github.com/avih75/TFS_Action_Button"
         },
         "issues": {
-            "uri": "https://github.com/avih75/TFS_ACction_Button/issues"
+            "uri": "https://github.com/avih75/TFS_Action_Button/issues"
         }
     },
     "files": [
@@ -67,7 +67,7 @@
         }
     ],
     "categories": [
-        "Plan and track"
+        "Azure Boards"
     ],
     "contributions": [
         {

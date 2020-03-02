@@ -18,6 +18,7 @@ export class Model {
         switch (pressed) {
             case "Convert Work Item": {
                 this.createNewWit()
+                break;
             }
             default: {
                 alert(pressed + " not implamented yet")
