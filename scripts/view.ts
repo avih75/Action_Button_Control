@@ -10,7 +10,7 @@ export class View {
         var container = $("<div />");
         container.addClass("container");  
         container.addClass("wrap");
-        this.model.list.forEach(element => {           
+        this.model.buttonList.forEach(element => {           
             let actionButton = $("<button />");  
             actionButton.addClass("buttons");
             actionButton.text(element);

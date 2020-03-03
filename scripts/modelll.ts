@@ -4,17 +4,17 @@ import RestClient = require("TFS/WorkItemTracking/RestClient");
 
 export class Model {
 
-    public list: Array<string>;
+    public buttonList: Array<string>;
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType;
 
     constructor(dataTransfer, targetType) {
         this.workItemType = targetType;
-        this.list = dataTransfer.split(",");
+        this.buttonList = dataTransfer.split(",");
         this.client = RestClient.getClient();
     }
 
-    public buttonPressed(pressed: string): void { 
+    public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
                 this.createNewWit()
@@ -25,7 +25,7 @@ export class Model {
             }
         }
     }
-    // convert bug to....
+    // convert to....
     private createNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
@@ -68,7 +68,7 @@ export class Model {
                 { "op": "add", "path": "/fields/System.Description", "value": FieldsList["System.Description"] ? FieldsList["System.Description"].toString() : '' },
             ];
         }
-        this.client.createWorkItem(document, project, type).then((newWorkItem) => { 
+        this.client.createWorkItem(document, project, type).then((newWorkItem) => {
             alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
             this.closeStateSave();
         });
