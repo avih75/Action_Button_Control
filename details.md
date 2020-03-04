@@ -29,12 +29,12 @@ you can get the data from this place
 
 ![Configuration](img/Helper.png)
 
-[Learn more](https://github.com/avih75/TFS_Action_Button.git/README.md) 
+[Learn more](https://github.com/avih75/Action_Button_Control.git) 
 about how to customize the control, and add more actions.
 
 # Source code 
 
-The [source](https://github.com/avih75/TFS_Action_Button.git) 
+The [source](https://github.com/avih75/Action_Button_Control.git) 
 this extension can be found on Github - feel free to take, fork and extend. 
 
 You can also learn how to build your own custom control extension for the work item form [here](https://www.visualstudio.com/en-us/docs/integrate/extensions/develop/custom-control). 
@@ -44,6 +44,6 @@ You can also learn how to build your own custom control extension for the work i
 * You can mail me for any Help.
 * I need your feedback! 
 * Add a review below.
-* Report issues in [GitHub](https://github.com/avih75/TFS_Action_Button.git).
+* Report issues in [GitHub](https://github.com/avih75/Action_Button_Control.git) 
 
 > Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.
