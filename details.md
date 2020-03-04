@@ -1,4 +1,4 @@
-# Make TFS more interactive
+# Make Azure DevOps more interactive
 
 ![Layout Customization](img/Form.png)
 

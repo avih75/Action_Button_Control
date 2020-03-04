@@ -1,13 +1,13 @@
 {
     "manifestVersion": 1,
-    "id": "TFS-Action-Button",
+    "id": "Action-Button-Control",
     "version": "1.1.6",
-    "name": "TFS Action Button",
+    "name": "Action Button Control",
     "scopes": [
         "vso.work",
         "vso.work_write"
     ],
-    "description": "Runs a code from the buttonAction.dll file",
+    "description": "Runs an Action",
     "publisher": "AviHadad",
     "icons": {
         "default": "img/logo.png"
@@ -67,12 +67,12 @@
         }
     ],
     "categories": [ 
-        "Plan and track"
+        "Azure Boards"
     ],
     "contributions": [
         {
             "id": "ActionButton",
-            "description": "Runs a code from the buttonAction.dll file.",
+            "description": "Runs an action",
             "type": "ms.vss-work-web.work-item-form-control",
             "targets": [
                 "ms.vss-work-web.work-item-form"
