@@ -1,5 +1,5 @@
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
-import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
+import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
 
 export class documentBuild {
@@ -20,7 +20,6 @@ export class Model {
         this.buttonList = dataTransfer.split(",");
         this.client = RestClient.getClient();
     }
-
     public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
@@ -50,7 +49,6 @@ export class Model {
                 })
             });
     }
-
     private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
         let project: string = FieldsList["System.TeamProject"].toString();
         let type: string = this.workItemType;
@@ -62,7 +60,6 @@ export class Model {
             var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
             tempDoc.push(x);
         });
-
         if (id != '') {
             tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
         }
@@ -72,7 +69,6 @@ export class Model {
             this.closeStateSave();
         });
     }
-
     private closeStateSave() {
         WorkItemFormService.getService().then(
             (service) => {

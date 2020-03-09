@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "TFS-Action-Button",
-    "version": "1.1.20",
+    "version": "1.1.21",
     "name": "TFS Action Button",
     "scopes": [
         "vso.work",
@@ -86,6 +86,23 @@
                         "id": "DataTransfer",
                         "name": "DataTransfer",
                         "description": "The field pass Data from the work item to the Action Code.",
+                        "type": "WorkItemField", 
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "FieldsToCopy",
+                        "name": "FieldsToCopy",
+                        "description": "The field pass the Fields List witch you want to copy.",
                         "type": "WorkItemField", 
                         "properties": {
                             "workItemFieldTypes": [
