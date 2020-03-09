@@ -1,6 +1,9 @@
-import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
+import { WorkItemFormService, WorkItemFormNavigationService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument, JsonPatchOperation, Operation } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
+import { ServiceEndpointExecutionResult } from "TFS/ServiceEndpoint/Contracts";
+import { ServiceHostStatus } from "TFS/Build/Contracts";
+import { SearchComboTreeBehavior } from "VSS/Controls/TreeView";
 
 export class Model {
 
@@ -19,7 +22,7 @@ export class Model {
             case "Convert Work Item": {
                 this.createNewWit()
                 break;
-            }
+            } 
             default: {
                 alert(pressed + " not implamented yet")
             }
@@ -51,20 +54,20 @@ export class Model {
         let document: JsonPatchDocument;
         if (id != '') {
             document = [
-                { "op": "add", "path": "/fields/System.IterationId", "value": FieldsList["System.IterationId"] ? FieldsList["System.IterationId"].toString() : '' },
-                { "op": "add", "path": "/fields/System.AreaPath", "value": FieldsList["System.AreaPath"] ? FieldsList["System.AreaPath"].toString() : '' },
-                { "op": "add", "path": "/fields/System.Title", "value": FieldsList["System.Title"] ? FieldsList["System.Title"].toString() : '' },
-                { "op": "add", "path": "/fields/System.CreatedBy", "value": FieldsList["System.CreatedBy"] ? FieldsList["System.CreatedBy"].toString() : '' },
-                { "op": "add", "path": "/fields/System.Description", "value": FieldsList["System.Description"] ? FieldsList["System.Description"].toString() : '' },
-                { "op": "add", "path": '/relations/-', "value": { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } },
+                { "op": "add", "path": "/fields/System.IterationId", "value": FieldsList["System.IterationId"]  ? FieldsList["System.IterationId"].toString() : '' },
+                { "op": "add", "path": "/fields/System.AreaPath",    "value": FieldsList["System.AreaPath"]     ? FieldsList["System.AreaPath"].toString() : '' },
+                { "op": "add", "path": "/fields/System.Title",       "value": FieldsList["System.Title"]        ? FieldsList["System.Title"].toString() : '' },
+                { "op": "add", "path": "/fields/System.CreatedBy",   "value": FieldsList["System.CreatedBy"]    ? FieldsList["System.CreatedBy"].toString() : '' },
+                { "op": "add", "path": "/fields/System.Description", "value": FieldsList["System.Description"]  ? FieldsList["System.Description"].toString() : '' },
+                { "op": "add", "path": '/relations/-',               "value": { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } },
             ];
         }
         else {
             document = [
                 { "op": "add", "path": "/fields/System.IterationId", "value": FieldsList["System.IterationId"] ? FieldsList["System.IterationId"].toString() : '' },
-                { "op": "add", "path": "/fields/System.AreaPath", "value": FieldsList["System.AreaPath"] ? FieldsList["System.AreaPath"].toString() : '' },
-                { "op": "add", "path": "/fields/System.Title", "value": FieldsList["System.Title"] ? FieldsList["System.Title"].toString() : '' },
-                { "op": "add", "path": "/fields/System.CreatedBy", "value": FieldsList["System.CreatedBy"] ? FieldsList["System.CreatedBy"].toString() : '' },
+                { "op": "add", "path": "/fields/System.AreaPath",    "value": FieldsList["System.AreaPath"]    ? FieldsList["System.AreaPath"].toString() : '' },
+                { "op": "add", "path": "/fields/System.Title",       "value": FieldsList["System.Title"]       ? FieldsList["System.Title"].toString() : '' },
+                { "op": "add", "path": "/fields/System.CreatedBy",   "value": FieldsList["System.CreatedBy"]   ? FieldsList["System.CreatedBy"].toString() : '' },
                 { "op": "add", "path": "/fields/System.Description", "value": FieldsList["System.Description"] ? FieldsList["System.Description"].toString() : '' },
             ];
         }
@@ -82,4 +85,5 @@ export class Model {
                 });
             });
     }
+ 
 }
