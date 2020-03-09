@@ -100,6 +100,23 @@
                         }
                     }, 
                     {
+                        "id": "FieldsToCopy",
+                        "name": "FieldsToCopy",
+                        "description": "The field pass the Fields List witch you want to copy.",
+                        "type": "WorkItemField", 
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
                         "id": "TargetType",
                         "name": "TargetType",
                         "description": "The field pass the target work item type.",
