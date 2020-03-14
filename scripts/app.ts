@@ -18,7 +18,7 @@ var provider = () => {
     return {
         onLoaded: (workItemLoadedArgs: IWorkItemLoadedArgs) => {
             control = new Controller();
-        }, 
+        },
     };
 };
 

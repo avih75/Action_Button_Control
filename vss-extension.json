@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
-    "id": "Action-Button-Control",
-    "version": "1.1.17",
-    "name": "Action Button Control",
+    "id": "TFS-Action-Button",
+    "version": "1.1.23",
+    "name": "TFS Action Button",
     "scopes": [
         "vso.work",
         "vso.work_write"

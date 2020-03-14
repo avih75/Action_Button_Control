@@ -23,11 +23,11 @@ export class Controller {
             (service) => {
                 Q.spread(
                     [service.getFieldValue(this._dataTransferFieldName),
-                     service.getFieldValue(this._targetType),
-                     service.getFieldValue(this._filedsToCopy)
+                    service.getFieldValue(this._targetType),
+                    service.getFieldValue(this._filedsToCopy)
                     ],
-                    (dataTransfer: string, targetType: string,fieldsToCopy:string) => {
-                        this._model = new Model(dataTransfer, targetType,fieldsToCopy);
+                    (dataTransfer: string, targetType: string, fieldsToCopy: string) => {
+                        this._model = new Model(dataTransfer, targetType, fieldsToCopy);
                         this._view = new View(this._model)
                     }, this._handleError
                 ).then(null, this._handleError);
@@ -37,6 +37,6 @@ export class Controller {
     }
     private _handleError(error: string): void {
         new ErrorView(error);
-    }  
+    }
 }
 
