@@ -16,10 +16,18 @@ export class Model {
 
     constructor(dataTransfer, targetType, fieldsToCopy) {
         this.fieldsList = fieldsToCopy.split(",");
+        let flag = false;
+        this.fieldsList.forEach(element => {
+            if (element == "System.TeamProject")
+                flag = true;
+        });
+        if (flag == false)
+            this.fieldsList.push("System.TeamProject");
         this.workItemType = targetType;
         this.buttonList = dataTransfer.split(",");
         this.client = RestClient.getClient();
     }
+
     public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
@@ -35,36 +43,26 @@ export class Model {
     private createNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues([
-                    "System.Id",
-                    "System.TeamProject",
-                    "System.IterationId",
-                    "System.AreaPath",
-                    "System.Title",
-                    "System.CreatedBy",
-                    "System.Description",
-                    "System.FoundIn"
-                ]).then((values) => {
+                service.getFieldValues(this.fieldsList).then((values) => {
                     this.createNewWorkItem(values);
                 })
             });
     }
     private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
         let project: string = FieldsList["System.TeamProject"].toString();
-        let type: string = this.workItemType;
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
-
         let tempDoc: Array<documentBuild> = [];
+        if (id != '') {
+            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
+        }
         this.fieldsList.forEach(element => {
             var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
             tempDoc.push(x);
         });
-        if (id != '') {
-            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
-        }
+
         document = tempDoc;  // test the new use
-        this.client.createWorkItem(document, project, type).then((newWorkItem) => {
+        this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
             alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
             this.closeStateSave();
         });
