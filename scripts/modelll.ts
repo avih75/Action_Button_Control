@@ -48,24 +48,57 @@ export class Model {
                 })
             });
     }
+    // private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
+    //     let project: string = FieldsList["System.TeamProject"].toString();
+    //     const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
+    //     let document: JsonPatchDocument;
+    //     let tempDoc: Array<documentBuild> = [];
+    //     if (id != '') {
+    //         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
+    //     }
+    //     this.fieldsList.forEach(element => {
+    //         var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
+    //         tempDoc.push(x);
+    //     });
+
+    //     document = tempDoc;  // test the new use
+    //     this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
+    //         alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+    //         this.closeStateSave();
+    //     });
+    // }
     private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
         let project: string = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
+        
         let document: JsonPatchDocument;
         let tempDoc: Array<documentBuild> = [];
-        if (id != '') {
-            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
-        }
+        // need to get the url
+
         this.fieldsList.forEach(element => {
             var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
             tempDoc.push(x);
         });
+        if (id != '') {
+            this.client.getWorkItem(+id).then((workitem)=>{
+                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem } })
+            }).then(()=>{
+                document = tempDoc;  // test the new use
+                this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
+                    alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+                    this.closeStateSave();
+                });
+            })
 
-        document = tempDoc;  // test the new use
-        this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-            alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-            this.closeStateSave();
-        });
+        }
+        else
+        {
+            document = tempDoc;  // test the new use
+            this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
+                alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+                this.closeStateSave();
+            });
+        }
     }
     private closeStateSave() {
         WorkItemFormService.getService().then(
