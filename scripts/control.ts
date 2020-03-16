@@ -4,6 +4,7 @@ import { View } from "./view";
 import { ErrorView } from "./errorView";
 import * as Q from "q";
 export class Controller {
+    private _changeCreatedBy: string = "";
     private _dataTransferFieldName: string = "";
     private _targetType: string = "";
     private _filedsToCopy: string = "";
@@ -16,18 +17,21 @@ export class Controller {
     }
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
+        this._changeCreatedBy = this._inputs["ChangeCreatedBy"];
         this._dataTransferFieldName = this._inputs["DataTransfer"];
         this._targetType = this._inputs["TargetType"];
         this._filedsToCopy = this._inputs["FieldsToCopy"];
         WitService.WorkItemFormService.getService().then(
             (service) => {
                 Q.spread(
-                    [service.getFieldValue(this._dataTransferFieldName),
-                    service.getFieldValue(this._targetType),
-                    service.getFieldValue(this._filedsToCopy)
+                    [
+                        service.getFieldValue(this._dataTransferFieldName),                    
+                        service.getFieldValue(this._targetType),
+                        service.getFieldValue(this._filedsToCopy),
+                        service.getFieldValue(this._changeCreatedBy)
                     ],
-                    (dataTransfer: string, targetType: string, fieldsToCopy: string) => {
-                        this._model = new Model(dataTransfer, targetType, fieldsToCopy);
+                    (dataTransfer: string, targetType: string, fieldsToCopy: string, changeCreatedBy:string) => {
+                        this._model = new Model(dataTransfer, targetType, fieldsToCopy, changeCreatedBy);
                         this._view = new View(this._model)
                     }, this._handleError
                 ).then(null, this._handleError);

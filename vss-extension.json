@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "TFS-Action-Button",
-    "version": "1.1.23",
+    "version": "1.1.32",
     "name": "TFS Action Button",
     "scopes": [
         "vso.work",
@@ -66,8 +66,8 @@
             "addressable": true
         }
     ],
-    "categories": [ 
-        "Azure Boards"
+    "categories": [
+        "Plan and track"
     ],
     "contributions": [
         {
@@ -81,12 +81,12 @@
                 "name": "Plus/minus integer control",
                 "uri": "index.html",
                 "height": 200,
-                "inputs": [ 
+                "inputs": [
                     {
                         "id": "DataTransfer",
                         "name": "DataTransfer",
                         "description": "The field pass Data from the work item to the Action Code.",
-                        "type": "WorkItemField",  
+                        "type": "WorkItemField",
                         "properties": {
                             "workItemFieldTypes": [
                                 "Integer",
@@ -98,12 +98,12 @@
                             "dataType": "String",
                             "isRequired": true
                         }
-                    }, 
+                    },
                     {
                         "id": "FieldsToCopy",
                         "name": "FieldsToCopy",
                         "description": "The field pass the Fields List witch you want to copy.",
-                        "type": "WorkItemField", 
+                        "type": "WorkItemField",
                         "properties": {
                             "workItemFieldTypes": [
                                 "Integer",
@@ -120,11 +120,26 @@
                         "id": "TargetType",
                         "name": "TargetType",
                         "description": "The field pass the target work item type.",
-                        "type": "WorkItemField", 
+                        "type": "WorkItemField",
                         "properties": {
                             "workItemFieldTypes": [
                                 "Integer",
                                 "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "ChangeCreatedBy",
+                        "name": "ChangeCreatedBy",
+                        "description": "The field pass the new user to change th Created by.",
+                        "type": "WorkItemField",
+                        "properties": {
+                            "workItemFieldTypes": [
                                 "String"
                             ]
                         },
