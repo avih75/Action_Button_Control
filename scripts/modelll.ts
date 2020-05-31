@@ -14,7 +14,7 @@ export class Model {
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType;
 
-    constructor(dataTransfer, targetType, fieldsToCopy) {
+    constructor(dataTransfer:string, targetType:string, fieldsToCopy:string) {
         this.fieldsList = fieldsToCopy.split(",");
         let flag = false;
         this.fieldsList.forEach(element => {
