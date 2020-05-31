@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
-    "id": "TFS-Action-Button",
-    "version": "1.1.34",
-    "name": "TFS Action Button",
+    "id": "Action-Button-Control",
+    "version": "1.1.35",
+    "name": "Action Button Control",
     "scopes": [
         "vso.work",
         "vso.work_write"
@@ -12,11 +12,9 @@
     "icons": {
         "default": "img/logo.png"
     },
-    "targets": [
-        {
-            "id": "Microsoft.VisualStudio.Services"
-        }
-    ],
+    "targets": [{
+        "id": "Microsoft.VisualStudio.Services"
+    }],
     "tags": [
         "Work Item",
         "Work Item control",
@@ -48,8 +46,7 @@
             "uri": "https://github.com/avih75/TFS_Action_Button/issues"
         }
     },
-    "files": [
-        {
+    "files": [{
             "path": "img",
             "addressable": true
         },
@@ -66,75 +63,72 @@
             "addressable": true
         }
     ],
-    "categories": [ 
+    "categories": [
         "Plan and track"
     ],
-    "contributions": [
-        {
-            "id": "ActionButton",
-            "description": "Runs an action",
-            "type": "ms.vss-work-web.work-item-form-control",
-            "targets": [
-                "ms.vss-work-web.work-item-form"
-            ],
-            "properties": {
-                "name": "Plus/minus integer control",
-                "uri": "index.html",
-                "height": 200,
-                "inputs": [ 
-                    {
-                        "id": "DataTransfer",
-                        "name": "DataTransfer",
-                        "description": "The field pass Data from the work item to the Action Code.",
-                        "type": "WorkItemField",  
-                        "properties": {
-                            "workItemFieldTypes": [
-                                "Integer",
-                                "Double",
-                                "String"
-                            ]
-                        },
-                        "validation": {
-                            "dataType": "String",
-                            "isRequired": true
-                        }
-                    }, 
-                    {
-                        "id": "FieldsToCopy",
-                        "name": "FieldsToCopy",
-                        "description": "The field pass the Fields List witch you want to copy.",
-                        "type": "WorkItemField", 
-                        "properties": {
-                            "workItemFieldTypes": [
-                                "Integer",
-                                "Double",
-                                "String"
-                            ]
-                        },
-                        "validation": {
-                            "dataType": "String",
-                            "isRequired": true
-                        }
+    "contributions": [{
+        "id": "ActionButton",
+        "description": "Runs an action",
+        "type": "ms.vss-work-web.work-item-form-control",
+        "targets": [
+            "ms.vss-work-web.work-item-form"
+        ],
+        "properties": {
+            "name": "Plus/minus integer control",
+            "uri": "index.html",
+            "height": 200,
+            "inputs": [{
+                    "id": "DataTransfer",
+                    "name": "DataTransfer",
+                    "description": "The field pass Data from the work item to the Action Code.",
+                    "type": "TextArea",
+                    "properties": {
+                        "workItemFieldTypes": [
+                            "Integer",
+                            "Double",
+                            "String"
+                        ]
                     },
-                    {
-                        "id": "TargetType",
-                        "name": "TargetType",
-                        "description": "The field pass the target work item type.",
-                        "type": "WorkItemField", 
-                        "properties": {
-                            "workItemFieldTypes": [
-                                "Integer",
-                                "Double",
-                                "String"
-                            ]
-                        },
-                        "validation": {
-                            "dataType": "String",
-                            "isRequired": true
-                        }
+                    "validation": {
+                        "dataType": "String",
+                        "isRequired": true
                     }
-                ]
-            }
+                },
+                {
+                    "id": "FieldsToCopy",
+                    "name": "FieldsToCopy",
+                    "description": "The field pass the Fields List witch you want to copy.",
+                    "type": "TextArea",
+                    "properties": {
+                        "workItemFieldTypes": [
+                            "Integer",
+                            "Double",
+                            "String"
+                        ]
+                    },
+                    "validation": {
+                        "dataType": "String",
+                        "isRequired": true
+                    }
+                },
+                {
+                    "id": "TargetType",
+                    "name": "TargetType",
+                    "description": "The field pass the target work item type.",
+                    "type": "TextArea",
+                    "properties": {
+                        "workItemFieldTypes": [
+                            "Integer",
+                            "Double",
+                            "String"
+                        ]
+                    },
+                    "validation": {
+                        "dataType": "String",
+                        "isRequired": true
+                    }
+                }
+            ]
         }
-    ]
+    }]
 }

@@ -1,6 +1,6 @@
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
-import RestClient = require("TFS/WorkItemTracking/RestClient"); 
+import RestClient = require("TFS/WorkItemTracking/RestClient");
 
 export class documentBuild {
     op: string;
@@ -33,11 +33,23 @@ export class Model {
             case "Convert Work Item": {
                 this.createNewWit()
                 break;
-            } 
+            }
+            case "Not a Bug": {
+                this.notABug()
+                break;
+            }
             default: {
                 alert(pressed + " not implamented yet")
             }
         }
+    }
+    private notABug() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues(this.fieldsList).then((values) => {
+                    this.createNewWorkItem(values, true);
+                })
+            });
     }
     // convert to....
     private createNewWit() {
@@ -48,55 +60,34 @@ export class Model {
                 })
             });
     }
-    // private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
-    //     let project: string = FieldsList["System.TeamProject"].toString();
-    //     const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
-    //     let document: JsonPatchDocument;
-    //     let tempDoc: Array<documentBuild> = [];
-    //     if (id != '') {
-    //         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: "http://elitebooki7:9090/tfs/DefaultCollection/_api/_wit/workitems/" + id } })
-    //     }
-    //     this.fieldsList.forEach(element => {
-    //         var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
-    //         tempDoc.push(x);
-    //     });
-
-    //     document = tempDoc;  // test the new use
-    //     this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-    //         alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-    //         this.closeStateSave();
-    //     });
-    // }
-    private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
+    private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
         let project: string = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
-        
         let document: JsonPatchDocument;
         let tempDoc: Array<documentBuild> = [];
         // need to get the url
-
         this.fieldsList.forEach(element => {
             var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
             tempDoc.push(x);
         });
         if (id != '') {
-            this.client.getWorkItem(+id).then((workitem)=>{
+            this.client.getWorkItem(+id).then((workitem) => {
                 tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem } })
-            }).then(()=>{
+            }).then(() => {
                 document = tempDoc;  // test the new use
                 this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
                     alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-                    this.closeStateSave();
+                    if (closeTheSource)
+                        this.closeStateSave();
                 });
             })
-
         }
-        else
-        {
+        else {
             document = tempDoc;  // test the new use
             this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
                 alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-                this.closeStateSave();
+                if (closeTheSource)
+                    this.closeStateSave();
             });
         }
     }
@@ -108,5 +99,5 @@ export class Model {
                 });
             });
     }
- 
+
 }
