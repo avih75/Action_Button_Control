@@ -18,6 +18,7 @@ var provider = () => {
     return {
         onLoaded: (workItemLoadedArgs: IWorkItemLoadedArgs) => {
             control = new Controller();
+            VSS.resize(30, 30);
         },
     };
 };

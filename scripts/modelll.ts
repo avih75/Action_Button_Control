@@ -1,6 +1,8 @@
 import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
+import WorkItemService = require("TFS/WorkItemTracking/Services");
+import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 
 export class documentBuild {
     op: string;
@@ -14,7 +16,7 @@ export class Model {
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType;
 
-    constructor(dataTransfer:string, targetType:string, fieldsToCopy:string) {
+    constructor(dataTransfer: string, targetType: string, fieldsToCopy: string) {
         this.fieldsList = fieldsToCopy.split(",");
         let flag = false;
         this.fieldsList.forEach(element => {
@@ -36,6 +38,18 @@ export class Model {
             }
             case "Not a Bug": {
                 this.notABug()
+                break;
+            }
+            case "New Task": {
+                this.NewWit()
+                break;
+            }
+            case "New Sub Task": {
+                this.NewWit()
+                break;
+            }
+            case "Duplicate": {
+                this.NewWit()
                 break;
             }
             default: {
@@ -99,5 +113,38 @@ export class Model {
                 });
             });
     }
-
+    // create new child by click
+    private NewWit() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues([this.workItemType, "System.Id"]).then((value) => {
+                    this.CreateNewTask(this.workItemType, value["System.Id"].toString(), service);
+                })
+            }
+        );
+    }
+    private CreateNewTask(taskType: string, parentId: string, serv: WorkItemService.IWorkItemFormService) {
+        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+            service.openNewWorkItem(taskType).then((newWorkItem: WorkItem) => {
+                alert("created new work item : " + newWorkItem.id + " from type : " + taskType);
+                // let newRelation: WorkItemRelation = {
+                //     rel: "System.LinkTypes.Hierarchy",
+                //     url: newWorkItem.url,
+                //     attributes: null
+                // }
+                // serv.addWorkItemRelations([newRelation]);
+                let document: JsonPatchDocument;
+                let tempDoc: Array<documentBuild> = [];
+                this.client.getWorkItem(+parentId).then((workitem) => {
+                    tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
+                }).then(() => {
+                    document = tempDoc;  // test the new use
+                    this.client.updateWorkItem(document, newWorkItem.id).then((updatedWit) => {
+                        alert("Add Parent Relation");
+                        serv.refresh(); 
+                    });
+                })
+            })
+        })
+    }
 }

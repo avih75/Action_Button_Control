@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.35",
+    "version": "1.1.45",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -74,7 +74,7 @@
             "ms.vss-work-web.work-item-form"
         ],
         "properties": {
-            "name": "Plus/minus integer control",
+            "name": "Actions control",
             "uri": "index.html",
             "height": 200,
             "inputs": [{
@@ -91,7 +91,7 @@
                     },
                     "validation": {
                         "dataType": "String",
-                        "isRequired": true
+                        "isRequired": false
                     }
                 },
                 {
@@ -108,7 +108,7 @@
                     },
                     "validation": {
                         "dataType": "String",
-                        "isRequired": true
+                        "isRequired": false
                     }
                 },
                 {
@@ -125,7 +125,7 @@
                     },
                     "validation": {
                         "dataType": "String",
-                        "isRequired": true
+                        "isRequired": false
                     }
                 }
             ]
