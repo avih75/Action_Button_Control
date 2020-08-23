@@ -2,25 +2,26 @@
 <html lang="en" style="height:100%">
 
 <head>
-	<meta charset="utf-8" />
-	<!-- VSS Framework -->
-	<script src="scripts/VSS.SDK.min.js"></script>
+    <meta charset="utf-8" />
+    <!-- VSS Framework -->
+    <script src="scripts/VSS.SDK.min.js"></script>
 
-	<title>Action Button Control</title>
-	<link rel="stylesheet" href="styles/style.css" type="text/css" />
+    <title>Action Button Control</title>
+    <link rel="stylesheet" href="styles/style.css" type="text/css" />
 </head>
 
 <body style="height:100%">
-	<script>
+    <script>
         VSS.init({
             explicitNotifyLoaded: true,
             usePlatformScripts: true,
-            usePlatformStyles: true, 
-            configureModuleLoader: true
+            usePlatformStyles: true,
+            configureModuleLoader: true,
+            applyTheme: true
         });
 
         // Load main entry point for extension 
-        VSS.require(["scripts/app"], function () {
+        VSS.require(["scripts/app"], function() {
             // loading succeeded
             VSS.notifyLoadSucceeded();
         });

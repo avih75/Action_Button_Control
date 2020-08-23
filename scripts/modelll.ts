@@ -2,7 +2,7 @@ import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemService = require("TFS/WorkItemTracking/Services");
-import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
+import { WorkItem } from "TFS/WorkItemTracking/Contracts";
 
 export class documentBuild {
     op: string;
@@ -53,7 +53,7 @@ export class Model {
                 break;
             }
             default: {
-                alert(pressed + " not implamented yet")
+                alert(pressed + " Button method not implamented yet")
             }
         }
     }
@@ -90,7 +90,7 @@ export class Model {
             }).then(() => {
                 document = tempDoc;  // test the new use
                 this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                    alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+                    //alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
                     if (closeTheSource)
                         this.closeStateSave();
                 });
@@ -99,7 +99,7 @@ export class Model {
         else {
             document = tempDoc;  // test the new use
             this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+                //alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
                 if (closeTheSource)
                     this.closeStateSave();
             });
@@ -117,22 +117,32 @@ export class Model {
     private NewWit() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues([this.workItemType, "System.Id"]).then((value) => {
-                    this.CreateNewTask(this.workItemType, value["System.Id"].toString(), service);
+                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description"]).then((value) => {
+                    this.CreateNewTask(this.workItemType, value["System.Id"].toString(),
+                        value["System.Title"].toString(), value["System.Description"].toString(), service);
                 })
             }
         );
     }
-    private CreateNewTask(taskType: string, parentId: string, serv: WorkItemService.IWorkItemFormService) {
+    private CreateNewTask(taskType: string, parentId: string, parentTitle: string, parentDescription: string, serv: WorkItemService.IWorkItemFormService) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-            service.openNewWorkItem(taskType).then((newWorkItem: WorkItem) => {
-                alert("created new work item : " + newWorkItem.id + " from type : " + taskType);
-                // let newRelation: WorkItemRelation = {
-                //     rel: "System.LinkTypes.Hierarchy",
-                //     url: newWorkItem.url,
-                //     attributes: null
-                // }
-                // serv.addWorkItemRelations([newRelation]);
+            let init: IDictionaryStringTo<Object> = null;
+            if (taskType == "I Task") {
+                init = {
+                    ["Custom.TaskDescription"]: parentDescription,
+                    ["System.Title"]: "Task of " + parentTitle,               
+                    ["System.Description"] : parentDescription
+                }
+            }
+            else {
+                init = {
+                    ["System.Title"]: "Sub Task of " + parentTitle,
+                    ["System.Description"] : parentDescription
+                }
+            }
+            service.openNewWorkItem(taskType, init).then((newWorkItem: WorkItem) => {
+                // newWorkItem.relations.push(parentId)
+                //alert("created new work item : " + newWorkItem.id + " from type : " + taskType);
                 let document: JsonPatchDocument;
                 let tempDoc: Array<documentBuild> = [];
                 this.client.getWorkItem(+parentId).then((workitem) => {
@@ -140,8 +150,8 @@ export class Model {
                 }).then(() => {
                     document = tempDoc;  // test the new use
                     this.client.updateWorkItem(document, newWorkItem.id).then((updatedWit) => {
-                        alert("Add Parent Relation");
-                        serv.refresh(); 
+                        //alert("Add Parent Relation");
+                        serv.refresh();
                     });
                 })
             })
