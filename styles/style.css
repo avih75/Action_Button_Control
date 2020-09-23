@@ -1,36 +1,46 @@
-.container {     
+.container {
     padding-left: 1px;
 }
 
-.buttons {     
+.buttons {
+    font: inherit;
     padding: 2px;
     margin: 5px;
-    background-color: lightblue;
-    color: blue;
+    background-color: blue;
+    color: white;
+}
+
+.buttons:hover {
+    cursor: pointer;
 }
 
 .wrap {
     flex-grow: 1;
 }
 
-.container > .bowtie-icon {
+.container>.bowtie-icon {
     font-size: 24px;
     color: lightgray;
     margin: 2px 2px 2px 2px;
     cursor: pointer;
 }
 
-.bowtie-icon.focus, .bowtie-icon:hover {
+.bowtie-icon.focus,
+.bowtie-icon:hover {
     color: gray;
 }
+
+
 /*
  * Remove up/down arrows on input type=number
  */
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type="number"] {
     -moz-appearance: textfield;
 }

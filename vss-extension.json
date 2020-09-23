@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.52",
+    "version": "1.1.70",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
