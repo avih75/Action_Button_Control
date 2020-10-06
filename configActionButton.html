@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%">
+
+<head>
+    <meta charset="utf-8" />
+    <!-- VSS Framework -->
+    <script src="scripts/VSS.SDK.min.js"></script>
+
+    <title>Config Action Button</title>
+    <link rel="stylesheet" href="styles/style.css" type="text/css" />
+</head>
+
+<body style="height:100%">
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            usePlatformStyles: true,
+            configureModuleLoader: true,
+            applyTheme: true
+        });
+        VSS.require(["scripts/appConfig"], function() {
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+</body>
+
+</html>
