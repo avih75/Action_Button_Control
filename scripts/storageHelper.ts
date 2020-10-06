@@ -13,7 +13,7 @@ export async function StoreValueList(FunctionList: Array<Function>) {
 export async function RetriveValueList() {
     let dataService: any = await VSS.getService(VSS.ServiceIds.ExtensionData);
     let result: Array<Function> = await dataService.getValue("FunctionsList");
-    return result;
+    return result ? result : new Array<Function>();
 }
 export async function SetValue(Function: Function) {
     var deferred = $.Deferred();

@@ -1,11 +1,15 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.70",
+    "version": "1.1.80",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
-        "vso.work_write"
+        "vso.work_write",
+        "vso.identity",
+        "vso.graph",
+        "vso.project",
+        "vso.security_manage"
     ],
     "description": "Runs an Action",
     "publisher": "AviHadad",
@@ -60,6 +64,10 @@
         },
         {
             "path": "index.html",
+            "addressable": true
+        },
+        {
+            "path": "configActionButton.html",
             "addressable": true
         }
     ],
