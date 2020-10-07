@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.80",
+    "version": "1.1.85",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -87,7 +87,7 @@
                 "height": 200,
                 "inputs": [{
                         "id": "DataTransfer",
-                        "name": "DataTransfer",
+                        "name": "Button name, can be more then one by using ;",
                         "description": "The field pass Data from the work item to the Action Code.",
                         "type": "TextArea",
                         "properties": {
@@ -99,13 +99,13 @@
                         },
                         "validation": {
                             "dataType": "String",
-                            "isRequired": false
+                            "isRequired": true
                         }
                     },
                     {
                         "id": "FieldsToCopy",
-                        "name": "FieldsToCopy",
-                        "description": "The field pass the Fields List witch you want to copy.",
+                        "name": "Fields To Copy",
+                        "description": "Fields List witch you want to copy (when using copy or new work item func).seperated by ;",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [
@@ -122,7 +122,7 @@
                     {
                         "id": "TargetType",
                         "name": "TargetType",
-                        "description": "The field pass the target work item type.",
+                        "description": "The field pass the target work item type - will be used if using copy or create function.",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [

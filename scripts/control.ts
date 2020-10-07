@@ -17,8 +17,8 @@ export class Controller {
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
         this._actionsNames = this._inputs["DataTransfer"];
-        this._targetType = this._inputs["TargetType"];
-        this._filedsToCopy = this._inputs["FieldsToCopy"];
+        this._targetType = (this._inputs["TargetType"]) ? this._inputs["TargetType"] : "";
+        this._filedsToCopy = (this._inputs["FieldsToCopy"]) ? this._inputs["FieldsToCopy"] : "";
         WitService.WorkItemFormService.getService().then(
             (service) => {
                 Q.spread(

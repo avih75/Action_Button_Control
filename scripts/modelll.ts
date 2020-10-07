@@ -3,6 +3,7 @@ import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemService = require("TFS/WorkItemTracking/Services");
 import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
+import { GetCommand } from "./StorageHelper";
 
 export class documentBuild {
     op: string;
@@ -29,7 +30,6 @@ export class Model {
         this.buttonList = dataTransfer.split(",");
         this.client = RestClient.getClient();
     }
-
     public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
@@ -199,9 +199,14 @@ export class Model {
             })
         })
     }
-    private RunString(Action: string) {
-        let command: string = "alert('You Presse');"
-        this.RunAction(command);
+    private async RunString(Action: string) {
+        let command: string = await GetCommand(Action);
+        if (command != "") {
+            this.RunAction(command);
+        }
+        else {
+            alert("No Action Set");
+        }
     }
     private RunAction(command: string) {
         return eval(command);
