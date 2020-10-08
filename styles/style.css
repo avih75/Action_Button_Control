@@ -8,6 +8,8 @@
     margin: 5px;
     background-color: blue;
     color: white;
+    width: auto;
+    height: auto;
 }
 
 .buttons:hover {

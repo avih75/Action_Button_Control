@@ -11,7 +11,7 @@ export class View {
         container.addClass("container");
         container.addClass("wrap");
         this.model.buttonList.forEach(element => {
-            let actionButton = $("<button />");
+            let actionButton = $("<button />"); 
             actionButton.addClass("buttons");
             actionButton.text(" " + element + " ");
             actionButton.click(() => { this.model.buttonPressed(element); });
@@ -20,5 +20,6 @@ export class View {
             container.append(newLine)
         });
         $("body").append(container);
+        VSS.resize();
     }
 }
