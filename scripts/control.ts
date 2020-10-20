@@ -29,7 +29,8 @@ export class Controller {
                     ],
                     (dataTransfer: string, targetType: string, fieldsToCopy: string) => {
                         this._model = new Model(dataTransfer, targetType, fieldsToCopy);
-                        this._view = new View(this._model)
+                        this._view = new View(this._model);
+                        VSS.resize();
                     }, this._handleError
                 ).then(null, this._handleError);
             },

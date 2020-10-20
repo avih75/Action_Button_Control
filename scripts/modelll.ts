@@ -136,24 +136,25 @@ export class Model {
     private NewWit() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description"]).then((value) => {
+                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description","Custom.Stages"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
                     this.CreateNewTask(this.workItemType, value["System.Title"].toString(), value["System.Description"].toString(),
-                        service, id);
+                        service, id, value["Custom.Stages"].toString());
                 })
             }
         );
     }
-    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, serv: WorkItemService.IWorkItemFormService, parentId: string) {
+    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, serv: WorkItemService.IWorkItemFormService, parentId: string, stage: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
             let init: IDictionaryStringTo<Object> = null;
             if (taskType == "I Task") {
                 init = {
                     ["Custom.TaskDescription"]: parentDescription,
                     ["System.Title"]: "Task of " + parentTitle,
-                    ["System.Description"]: parentDescription
+                    ["System.Description"]: parentDescription,
+                    ["Custom.Stages"]: stage
                 }
             }
             else {

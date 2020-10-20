@@ -8,24 +8,27 @@
 
     <title>Action Button Control</title>
     <link rel="stylesheet" href="styles/style.css" type="text/css" />
+
 </head>
 
 <body style="height:100%">
-    <script>
-        VSS.init({
-            explicitNotifyLoaded: true,
-            usePlatformScripts: true,
-            usePlatformStyles: true,
-            configureModuleLoader: true,
-            applyTheme: true
-        });
 
-        // Load main entry point for extension 
-        VSS.require(["scripts/app"], function() {
-            // loading succeeded
-            VSS.notifyLoadSucceeded();
-        });
-    </script>
 </body>
+<script>
+    VSS.init({
+        explicitNotifyLoaded: true,
+        usePlatformScripts: true,
+        usePlatformStyles: true,
+        configureModuleLoader: true,
+        applyTheme: true
+    });
+
+    // Load main entry point for extension 
+    VSS.require(["scripts/app"], function() {
+        // loading succeeded
+        VSS.notifyLoadSucceeded();
+    });
+    VSS.resize();
+</script>
 
 </html>
