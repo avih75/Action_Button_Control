@@ -30,6 +30,12 @@
     "content": {
         "details": {
             "path": "details.md"
+        },
+        "license": {
+            "path": "LICENSE.md"
+        },
+        "privacy": {
+            "path": "PRIVACY.md"
         }
     },
     "repository": {
@@ -39,6 +45,12 @@
     "links": {
         "support": {
             "uri": "https://github.com/avih75/TFS_Action_Button/issues"
+        },
+        "license": {
+            "uri": "https://github.com/avih75/TFS_Action_Button/blob/master/LICENSE.md"
+        },
+        "privacypolicy": {
+            "uri": "https://github.com/avih75/TFS_Action_Button/blob/master/PRIVACY.md"
         },
         "learn": {
             "uri": "https://github.com/avih75/TFS_Action_Button/blob/master/README.md"
