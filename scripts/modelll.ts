@@ -136,17 +136,17 @@ export class Model {
     private NewWit() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description","Custom.Stages"]).then((value) => {
+                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
                     this.CreateNewTask(this.workItemType, value["System.Title"].toString(), value["System.Description"].toString(),
-                        service, id, value["Custom.Stages"].toString());
+                        id, value["Custom.Stages"].toString());//, value["Custom.Severityfield"].toString());
                 })
             }
         );
     }
-    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, serv: WorkItemService.IWorkItemFormService, parentId: string, stage: string) {
+    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, parentId: string, stage: string){//, severity: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
             let init: IDictionaryStringTo<Object> = null;
             if (taskType == "I Task") {
@@ -154,20 +154,24 @@ export class Model {
                     ["Custom.TaskDescription"]: parentDescription,
                     ["System.Title"]: "Task of " + parentTitle,
                     ["System.Description"]: parentDescription,
-                    ["Custom.Stages"]: stage
+                    ["Custom.Stages"]: stage,
+                    ["System.AreaId"]: "76",
+                    //["Custom.Severityfield"]: severity
                 }
             }
             else {
                 init = {
                     ["System.Title"]: "Sub Task of " + parentTitle,
-                    ["System.Description"]: parentDescription
+                    ["System.Description"]: parentDescription,
+                    ["System.AreaId"]: "76",
+                    ["Custom.Stages"]: stage,
+                    //["Custom.Severityfield"]: severity
                 }
             }
             service.openNewWorkItem(taskType, init).then((newWorkItem: WorkItem) => {
                 let document: JsonPatchDocument;
                 let tempDoc: Array<documentBuild> = [];
                 if (parentId != "") {
-
                     this.client.getWorkItem(+parentId).then((workitem) => {
                         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
                     }).then(() => {
@@ -193,7 +197,7 @@ export class Model {
                     relations.push(rel);
                     WorkItemFormService.getService().then(
                         (service) => {
-                            service.addWorkItemRelations(relations);
+                            service.addWorkItemRelations(relations).then(()=>{service.refresh()});
                         }
                     )
                 }
