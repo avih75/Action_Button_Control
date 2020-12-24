@@ -44,6 +44,10 @@ export class Model {
                 this.NewWit()
                 break;
             }
+            case "Create CAB Request": {
+                this.NewCAB()
+                break;
+            }
             case "New Sub Task": {
                 this.NewWit()
                 break;
@@ -133,10 +137,63 @@ export class Model {
             });
     }
     // create new child by click
+    private NewCAB() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues(["System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
+                    let id = "";
+                    if (value["System.Id"])
+                        id = value["System.Id"].toString();
+                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["Custom.Stages"].toString());
+                })
+            }
+        );
+    }
+    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, stage: string) {
+        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+            let init: IDictionaryStringTo<Object> = {
+                ["System.Title"]: "Sub Task of " + parentTitle,
+                ["System.Description"]: parentDescription,
+                ["Custom.Stages"]: stage,
+                ["Custom.TaskDescription"]: parentDescription,
+                ["System.AreaId"]: "76"
+            }
+            service.openNewWorkItem("taskType", init).then((newWorkItem: WorkItem) => {
+                let document: JsonPatchDocument;
+                let tempDoc: Array<documentBuild> = [];
+                WorkItemFormService.getService().then(
+                    (service2) => {
+                        if (parentId != "") {
+                            this.client.getWorkItem(+parentId).then((workitem) => {
+                                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
+                            }).then(() => {
+                                document = tempDoc;  // test the new use
+                                this.client.updateWorkItem(document, newWorkItem.id);
+                            }).then(() => {
+                                service2.getWorkItemRelations().then((x) => {
+                                    let w = x;
+                                })
+                            })
+                        }
+                        else {
+                            let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
+                            let rel: WorkItemRelation = {
+                                attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
+                                rel: "System.LinkTypes.Hierarchy-Forward",
+                                url: newWorkItem.url
+                            }
+                            relations.push(rel);
+                            service2.addWorkItemRelations(relations).then(() => { service2.refresh() });
+                        }
+                    }
+                )
+            })
+        })
+    }
     private NewWit() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues([this.workItemType, "System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
+                service.getFieldValues(["System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
@@ -146,61 +203,46 @@ export class Model {
             }
         );
     }
-    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, parentId: string, stage: string){//, severity: string) {
+    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, parentId: string, stage: string) {//, severity: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-            let init: IDictionaryStringTo<Object> = null;
-            if (taskType == "I Task") {
-                init = {
-                    ["Custom.TaskDescription"]: parentDescription,
-                    ["System.Title"]: "Task of " + parentTitle,
-                    ["System.Description"]: parentDescription,
-                    ["Custom.Stages"]: stage,
-                    ["System.AreaId"]: "76",
-                    //["Custom.Severityfield"]: severity
-                }
+            let init: IDictionaryStringTo<Object> = {
+                ["System.Title"]: "Sub Task of " + parentTitle,
+                ["System.Description"]: parentDescription,
+                ["Custom.Stages"]: stage,
+                ["System.AreaId"]: "76"
+                //["Custom.Severityfield"]: severity
             }
-            else {
-                init = {
-                    ["System.Title"]: "Sub Task of " + parentTitle,
-                    ["System.Description"]: parentDescription,
-                    ["System.AreaId"]: "76",
-                    ["Custom.Stages"]: stage,
-                    //["Custom.Severityfield"]: severity
-                }
-            }
+            if (taskType == "I Task")
+                init["Custom.TaskDescription"] = parentDescription;
             service.openNewWorkItem(taskType, init).then((newWorkItem: WorkItem) => {
                 let document: JsonPatchDocument;
                 let tempDoc: Array<documentBuild> = [];
-                if (parentId != "") {
-                    this.client.getWorkItem(+parentId).then((workitem) => {
-                        tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
-                    }).then(() => {
-                        document = tempDoc;  // test the new use
-                        this.client.updateWorkItem(document, newWorkItem.id);
-                    }).then(() => {
-                        WorkItemFormService.getService().then(
-                            (service) => {
-                                service.getWorkItemRelations().then((x) => {
+                WorkItemFormService.getService().then(
+                    (service2) => {
+                        if (parentId != "") {
+                            this.client.getWorkItem(+parentId).then((workitem) => {
+                                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
+                            }).then(() => {
+                                document = tempDoc;  // test the new use
+                                this.client.updateWorkItem(document, newWorkItem.id);
+                            }).then(() => {
+                                service2.getWorkItemRelations().then((x) => {
                                     let w = x;
                                 })
-                            }
-                        )
-                    })
-                }
-                else {
-                    let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                    let rel: WorkItemRelation = {
-                        attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                        rel: "System.LinkTypes.Hierarchy-Forward",
-                        url: newWorkItem.url
-                    }
-                    relations.push(rel);
-                    WorkItemFormService.getService().then(
-                        (service) => {
-                            service.addWorkItemRelations(relations).then(()=>{service.refresh()});
+                            })
                         }
-                    )
-                }
+                        else {
+                            let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
+                            let rel: WorkItemRelation = {
+                                attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
+                                rel: "System.LinkTypes.Hierarchy-Forward",
+                                url: newWorkItem.url
+                            }
+                            relations.push(rel);
+                            service2.addWorkItemRelations(relations).then(() => { service2.refresh() });
+                        }
+                    }
+                )
             })
         })
     }
