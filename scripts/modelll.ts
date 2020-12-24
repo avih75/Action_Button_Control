@@ -140,25 +140,24 @@ export class Model {
     private NewCAB() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues(["System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
+                service.getFieldValues(["System.Id", "System.Title", "System.Description", "System.Risk","System.DueDate"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
-                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["Custom.Stages"].toString());
+                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["System.Risk"].toString(),value["System.DueDate"].toString());
                 })
             }
         );
     }
-    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, stage: string) {
+    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, risk: string,dueDate: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
             let init: IDictionaryStringTo<Object> = {
                 ["System.Title"]: "Sub Task of " + parentTitle,
                 ["System.Description"]: parentDescription,
-                ["Custom.Stages"]: stage,
-                ["Custom.TaskDescription"]: parentDescription,
-                ["System.AreaId"]: "76"
+                ["System.Risk"]: risk,
+                ["System.DueDate"]: dueDate
             }
-            service.openNewWorkItem("taskType", init).then((newWorkItem: WorkItem) => {
+            service.openNewWorkItem("Change Request", init).then((newWorkItem: WorkItem) => {
                 let document: JsonPatchDocument;
                 let tempDoc: Array<documentBuild> = [];
                 WorkItemFormService.getService().then(
