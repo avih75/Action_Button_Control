@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.101",
+    "version": "1.1.103",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -135,6 +135,23 @@
                         "id": "TargetType",
                         "name": "TargetType",
                         "description": "The field pass the target work item type - will be used if using copy or create function.",
+                        "type": "TextArea",
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": false
+                        }
+                    },
+                    {
+                        "id": "TargetProject",
+                        "name": "Target Project",
+                        "description": "The field pass the target project - will be used if using copy or create function.",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [

@@ -16,8 +16,9 @@ export class Model {
     public fieldsList: Array<string>;
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType;
+    private targetProject;
 
-    constructor(dataTransfer: string, targetType: string, fieldsToCopy: string) {
+    constructor(dataTransfer: string, targetType: string, fieldsToCopy: string, targetProject: string) {
         this.fieldsList = fieldsToCopy.split(",");
         let flag = false;
         this.fieldsList.forEach(element => {
@@ -27,6 +28,7 @@ export class Model {
         if (flag == false)
             this.fieldsList.push("System.TeamProject");
         this.workItemType = targetType;
+        this.targetProject = targetProject;
         this.buttonList = dataTransfer.split(",");
         this.client = RestClient.getClient();
     }
@@ -89,7 +91,8 @@ export class Model {
             });
     }
     private createNewWorkItem2(FieldsList: IDictionaryStringTo<Object>) {
-        let project: string = FieldsList["System.TeamProject"].toString();
+        if (this.targetProject == "")
+            this.targetProject = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
         let tempDoc: Array<documentBuild> = [];
@@ -100,7 +103,7 @@ export class Model {
         });
         document = tempDoc;  // test the new use
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-            this.client.createWorkItem(document, project, this.workItemType).then(async (newWorkItem) => {
+            this.client.createWorkItem(document, this.targetProject, this.workItemType).then(async (newWorkItem) => {
                 alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
                 if (newWorkItem != undefined && newWorkItem.id > 0) {
                     let tempDoc: Array<documentBuild> = [];
