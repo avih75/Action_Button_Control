@@ -98,8 +98,11 @@ export class Model {
         let tempDoc: Array<documentBuild> = [];
         // need to get the url
         this.fieldsList.forEach(element => {
-            var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
-            tempDoc.push(x);
+            element=element.trim();
+            if(element!=""){
+                var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
+                tempDoc.push(x);
+            }
         });
         document = tempDoc;  // test the new use
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
