@@ -44,10 +44,10 @@ export class Model {
                 this.NewWit()
                 break;
             }
-            case "Create CAB Request": {
-                this.NewCAB()
-                break;
-            }
+            // case "Create CAB Request": {
+            //     this.NewCAB()
+            //     break;
+            // }
             case "New Sub Task": {
                 this.NewWit()
                 break;
@@ -56,8 +56,11 @@ export class Model {
                 this.NewWit()
                 break;
             }
-            default: {
+            case "Command": {
                 this.RunString(pressed);
+            }
+            default: {
+                this.createNewWit2();
             }
         }
     }
@@ -77,7 +80,15 @@ export class Model {
                 })
             });
     }
-    private createNewWorkItem2(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
+    private createNewWit2() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues(this.fieldsList).then((values) => {
+                    this.createNewWorkItem2(values);
+                })
+            });
+    }
+    private createNewWorkItem2(FieldsList: IDictionaryStringTo<Object>) {
         let project: string = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
@@ -88,14 +99,18 @@ export class Model {
             tempDoc.push(x);
         });
         document = tempDoc;  // test the new use
-        this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-            alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-            if (newWorkItem != undefined && newWorkItem.id > 0) {
-                let tempDoc: Array<documentBuild> = [];
-                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy", url: newWorkItem } })
-                this.client.updateWorkItem(tempDoc, +id).then(() => alert("lined !"));
-            }
+        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+            this.client.createWorkItem(document, project, this.workItemType).then(async (newWorkItem) => {
+                alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+                if (newWorkItem != undefined && newWorkItem.id > 0) {
+                    let tempDoc: Array<documentBuild> = [];
+                    tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy", url: newWorkItem } })
+                    await this.client.updateWorkItem(tempDoc, +id).then(() => alert("lined !"));
+                }
+                service.openWorkItem(newWorkItem.id)
+            });
         });
+
     }
     private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
         let project: string = FieldsList["System.TeamProject"].toString();
@@ -113,16 +128,12 @@ export class Model {
             }).then(() => {
                 document = tempDoc;  // test the new use
                 this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                    //alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
-                    //if (closeTheSource)
-                    //this.closeStateSave();
                 });
             })
         }
         else {
             document = tempDoc;  // test the new use
             this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                //alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
                 if (closeTheSource)
                     this.closeStateSave();
             });
@@ -140,16 +151,16 @@ export class Model {
     private NewCAB() {
         WorkItemFormService.getService().then(
             (service) => {
-                service.getFieldValues(["System.Id", "System.Title", "System.Description", "System.Risk","System.DueDate"]).then((value) => {
+                service.getFieldValues(["System.Id", "System.Title", "System.Description", "System.Risk", "System.DueDate"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
-                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["System.Risk"].toString(),value["System.DueDate"].toString());
+                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["System.Risk"].toString(), value["System.DueDate"].toString());
                 })
             }
         );
     }
-    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, risk: string,dueDate: string) {
+    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, risk: string, dueDate: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
             let init: IDictionaryStringTo<Object> = {
                 ["System.Title"]: "Sub Task of " + parentTitle,
