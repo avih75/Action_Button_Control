@@ -21,13 +21,13 @@ export class Model {
     constructor(dataTransfer: string, targetType: string, fieldsToCopy: string, targetProject: string) {
         fieldsToCopy = "System.Id," + fieldsToCopy;
         this.fieldsList = fieldsToCopy.split(",");
-        // let flag = false;
-        // this.fieldsList.forEach(element => {
-        //     if (element == "System.TeamProject")
-        //         flag = true;
-        // });
-        // if (flag == false)
-        this.fieldsList.push("System.TeamProject");
+        let flag = false;
+        this.fieldsList.forEach(element => {
+            if (element == "System.TeamProject")
+                flag = true;
+        });
+        if (flag == false)
+            this.fieldsList.push("System.TeamProject");
         this.workItemType = targetType;
         this.targetProject = targetProject;
         this.buttonList = dataTransfer.split(",");
@@ -94,7 +94,6 @@ export class Model {
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
         let tempDoc: Array<documentBuild> = [];
-        // need to get the url
         if (this.targetProject == "")
             FieldsList["System.TeamProject"] = this.targetProject;
         this.fieldsList.forEach(element => {
@@ -104,36 +103,40 @@ export class Model {
                 tempDoc.push(x);
             }
         });
-        document = tempDoc;  // test the new use
-
-        //WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+        document = tempDoc;
         this.client.createWorkItem(document, this.targetProject, this.workItemType, null, true).then(async (newWorkItem) => {
-            alert("new " + this.workItemType + " was created, ID number : " + newWorkItem.id);
+            alert("New " + this.workItemType + " created,in " + this.targetProject + ". ID : " + newWorkItem.id);
+            tempDoc = [];
             WorkItemFormService.getService().then(
                 async (service2) => {
-                    let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                    let rel: WorkItemRelation = {
-                        attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                        rel: "System.LinkTypes.Hierarchy-Forward",
-                        url: newWorkItem.url
-                    }
-                    relations.push(rel);
-                    service2.addWorkItemRelations(relations).then(() => {
-                         //service2.refresh() 
-                         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-                            service.openWorkItem(newWorkItem.id)
-                        })
+                    if (id == "") {
+                        let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
+                        let rel: WorkItemRelation = {
+                            attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
+                            rel: "System.LinkTypes.Hierarchy-Forward",
+                            url: newWorkItem.url
+                        }
+                        relations.push(rel);
+                        service2.addWorkItemRelations(relations).then(() => {
+                            WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+                                service.openWorkItem(newWorkItem.id)
+                            })
                         });
-                    // if (newWorkItem != undefined && newWorkItem.id > 0) {
-                    //     let tempDoc: Array<documentBuild> = [];
-                    //     tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy", url: newWorkItem } })
-                    //     await this.client.updateWorkItem(tempDoc, +id).then(() => alert("linked !"));
-                    // }
-
+                    }
+                    else {
+                        this.client.getWorkItem(+id).then((workitem) => {
+                            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
+                        }).then(() => {
+                            document = tempDoc;  // test the new use
+                            this.client.updateWorkItem(document, newWorkItem.id).then(()=>{
+                                WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+                                    service.openWorkItem(newWorkItem.id)
+                                })
+                            });
+                        });
+                    }
                 })
         });
-        //});
-
     }
     private createNewWorkItem3(FieldsList: IDictionaryStringTo<Object>) {
         if (this.targetProject == "")
