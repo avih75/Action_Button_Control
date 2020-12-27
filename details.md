@@ -27,10 +27,10 @@ and give each button the functionality you need. (from the given list)
 * Create Child Link     - Mark if you want to create link with the new work item as a child
 ## Configuration
 
-![Hit Count Control](img/Screenshot_5.png)
-![Hit Count Control](img/Screenshot_5.png)
-![Hit Count Control](img/Screenshot_5.png)
-![Hit Count Control](img/Screenshot_5.png)
+![Hit Count Control](img/Screenshot_1.png)
+![Hit Count Control](img/Screenshot_2.png)
+![Hit Count Control](img/Screenshot_3.png)
+![Hit Count Control](img/Screenshot_4.png)
 
 # Source code 
 
