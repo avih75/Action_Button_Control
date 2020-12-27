@@ -12,13 +12,18 @@ export class documentBuild {
 }
 export class Model {
 
-    public buttonList: Array<string>;
+    public buttonFunctionList: Array<string>;
+    public buttonNameList: Array<string>;
     public fieldsList: Array<string>;
     private client: RestClient.WorkItemTrackingHttpClient4_1;
-    private workItemType;
-    private targetProject;
+    private workItemType: string;
+    private targetProject: string;
+    private linkToParent: boolean;
+    private titelPrev: string;
 
-    constructor(dataTransfer: string, targetType: string, fieldsToCopy: string, targetProject: string) {
+    constructor(buttonActions: string, buttonsNames: string, targetType: string, fieldsToCopy: string, targetProject: string, titelPrev: string, linkToParent: boolean) {
+        this.titelPrev = titelPrev;
+        this.linkToParent = linkToParent;
         fieldsToCopy = "System.Id," + fieldsToCopy;
         this.fieldsList = fieldsToCopy.split(",");
         let flag = false;
@@ -30,65 +35,70 @@ export class Model {
             this.fieldsList.push("System.TeamProject");
         this.workItemType = targetType;
         this.targetProject = targetProject;
-        this.buttonList = dataTransfer.split(",");
+        this.buttonFunctionList = buttonActions.split(",");
+        this.buttonNameList=buttonsNames.split(",");
         this.client = RestClient.getClient();
     }
     public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
-                this.createNewWit()
+                this.ConvertWit()
                 break;
             }
             case "Not a Bug": {
-                this.notABug()
+                this.NotABug()
                 break;
             }
             case "New Task": {
-                this.NewWit()
+                this.HPNewWit()
                 break;
             }
             case "New Sub Task": {
-                this.NewWit()
+                this.HPNewWit()
                 break;
             }
             case "Duplicate": {
-                this.NewWit()
+                this.HPNewWit()
+                break;
+            }
+            case "New Work Item": {
+                this.CreateNewWit()
                 break;
             }
             case "Command": {
                 this.RunString(pressed);
             }
             default: {
-                this.createNewWit2();
+                this.CreateNewWit();
             }
         }
     }
-    private notABug() {
+    private NotABug() {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues(this.fieldsList).then((values) => {
-                    this.createNewWorkItem(values, true);
+                    this.ConvertWorkItem(values, true);
                 })
             });
     }
-    private createNewWit() {
+    private ConvertWit() {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues(this.fieldsList).then((values) => {
-                    this.createNewWorkItem(values);
+                    this.ConvertWorkItem(values);
                 })
             });
     }
-    private createNewWit2() {
+    private CreateNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues(this.fieldsList).then((values) => {
-                    this.createNewWorkItem2(values);
+                    this.CreateNewWorkItem(values);
                     //this.createNewWorkItem3(values);
                 })
             });
     }
-    private createNewWorkItem2(FieldsList: IDictionaryStringTo<Object>) {
+    private CreateNewWorkItem(FieldsList: IDictionaryStringTo<Object>) {
         if (this.targetProject == "")
             this.targetProject = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
@@ -96,6 +106,12 @@ export class Model {
         let tempDoc: Array<documentBuild> = [];
         if (this.targetProject == "")
             FieldsList["System.TeamProject"] = this.targetProject;
+        if (FieldsList["System.Title"]) {
+            FieldsList["System.Title"] = this.titelPrev + " " + FieldsList["System.Title"].toString();
+        }
+        else {
+            FieldsList["System.Title"] = this.titelPrev
+        }
         this.fieldsList.forEach(element => {
             element = element.trim();
             if (element != "" && element != "System.Id" && element! + "System.TeamProject") {
@@ -107,76 +123,39 @@ export class Model {
         this.client.createWorkItem(document, this.targetProject, this.workItemType, null, true).then(async (newWorkItem) => {
             alert("New " + this.workItemType + " created,in " + this.targetProject + ". ID : " + newWorkItem.id);
             tempDoc = [];
-            WorkItemFormService.getService().then(
-                async (service2) => {
-                    if (id == "") {
-                        let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                        let rel: WorkItemRelation = {
-                            attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                            rel: "System.LinkTypes.Hierarchy-Forward",
-                            url: newWorkItem.url
-                        }
-                        relations.push(rel);
-                        service2.addWorkItemRelations(relations).then(() => {
-                            WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-                                service.openWorkItem(newWorkItem.id)
-                            })
-                        });
-                    }
-                    else {
-                        this.client.getWorkItem(+id).then((workitem) => {
-                            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
-                        }).then(() => {
-                            document = tempDoc;  // test the new use
-                            this.client.updateWorkItem(document, newWorkItem.id).then(()=>{
+            if (this.linkToParent)
+                WorkItemFormService.getService().then(
+                    async (service2) => {
+                        if (id == "") {
+                            let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
+                            let rel: WorkItemRelation = {
+                                attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
+                                rel: "System.LinkTypes.Hierarchy-Forward",
+                                url: newWorkItem.url
+                            }
+                            relations.push(rel);
+                            service2.addWorkItemRelations(relations).then(() => {
                                 WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
                                     service.openWorkItem(newWorkItem.id)
                                 })
                             });
-                        });
-                    }
-                })
+                        }
+                        else {
+                            this.client.getWorkItem(+id).then((workitem) => {
+                                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
+                            }).then(() => {
+                                document = tempDoc;  // test the new use
+                                this.client.updateWorkItem(document, newWorkItem.id).then(() => {
+                                    WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+                                        service.openWorkItem(newWorkItem.id)
+                                    })
+                                });
+                            });
+                        }
+                    })
         });
     }
-    private createNewWorkItem3(FieldsList: IDictionaryStringTo<Object>) {
-        if (this.targetProject == "")
-            this.targetProject = FieldsList["System.TeamProject"].toString();
-        const parentId = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
-        let init: IDictionaryStringTo<Object> = {};
-        for (let index = 1; index < this.fieldsList.length; index++) {
-            let element = this.fieldsList[index].trim();
-            if (element != "") {
-                init[element] = FieldsList[element].toString();
-            }
-        }
-
-        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-            service.openNewWorkItem(this.workItemType, init).then((newWorkItem: WorkItem) => {
-                WorkItemFormService.getService().then(
-                    (service2) => {
-                        let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                        let rel: WorkItemRelation = {
-                            attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                            rel: "System.LinkTypes.Hierarchy-Forward",
-                            url: newWorkItem.url
-                        }
-                        relations.push(rel);
-                        service2.addWorkItemRelations(relations).then(() => { service2.refresh() });
-                    }
-                ).then(() => {
-                    if (this.targetProject != init["System.TeamProject"]) {
-                        let document: JsonPatchDocument;
-                        let tempDoc: Array<documentBuild> = [];
-                        let x: documentBuild = { op: "add", path: "/fields/System.NodeName", value: this.targetProject };
-                        tempDoc.push(x);
-                        document = tempDoc;
-                        this.client.updateWorkItem(document, newWorkItem.id);
-                    }
-                })
-            })
-        })
-    }
-    private createNewWorkItem(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
+    private ConvertWorkItem(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
         let project: string = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
@@ -211,73 +190,20 @@ export class Model {
                 });
             });
     }
-    // create new child by click
-    private NewCAB() {
-        WorkItemFormService.getService().then(
-            (service) => {
-                service.getFieldValues(["System.Id", "System.Title", "System.Description", "System.Risk", "System.DueDate"]).then((value) => {
-                    let id = "";
-                    if (value["System.Id"])
-                        id = value["System.Id"].toString();
-                    this.CreateNewCAB(value["System.Title"].toString(), value["System.Description"].toString(), id, value["System.Risk"].toString(), value["System.DueDate"].toString());
-                })
-            }
-        );
-    }
-    private CreateNewCAB(parentTitle: string, parentDescription: string, parentId: string, risk: string, dueDate: string) {
-        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-            let init: IDictionaryStringTo<Object> = {
-                ["System.Title"]: "Sub Task of " + parentTitle,
-                ["System.Description"]: parentDescription,
-                ["System.Risk"]: risk,
-                ["System.DueDate"]: dueDate
-            }
-            service.openNewWorkItem("Change Request", init).then((newWorkItem: WorkItem) => {
-                let document: JsonPatchDocument;
-                let tempDoc: Array<documentBuild> = [];
-                WorkItemFormService.getService().then(
-                    (service2) => {
-                        if (parentId != "") {
-                            this.client.getWorkItem(+parentId).then((workitem) => {
-                                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
-                            }).then(() => {
-                                document = tempDoc;  // test the new use
-                                this.client.updateWorkItem(document, newWorkItem.id);
-                            }).then(() => {
-                                service2.getWorkItemRelations().then((x) => {
-                                    let w = x;
-                                })
-                            })
-                        }
-                        else {
-                            let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                            let rel: WorkItemRelation = {
-                                attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                                rel: "System.LinkTypes.Hierarchy-Forward",
-                                url: newWorkItem.url
-                            }
-                            relations.push(rel);
-                            service2.addWorkItemRelations(relations).then(() => { service2.refresh() });
-                        }
-                    }
-                )
-            })
-        })
-    }
-    private NewWit() {
+    private HPNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues(["System.Id", "System.Title", "System.Description", "Custom.Stages", "Custom.Severityfield"]).then((value) => {
                     let id = "";
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
-                    this.CreateNewTask(this.workItemType, value["System.Title"].toString(), value["System.Description"].toString(),
+                    this.HPCreateNewTask(this.workItemType, value["System.Title"].toString(), value["System.Description"].toString(),
                         id, value["Custom.Stages"].toString());//, value["Custom.Severityfield"].toString());
                 })
             }
         );
     }
-    private CreateNewTask(taskType: string, parentTitle: string, parentDescription: string, parentId: string, stage: string) {//, severity: string) {
+    private HPCreateNewTask(taskType: string, parentTitle: string, parentDescription: string, parentId: string, stage: string) {//, severity: string) {
         WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
             let init: IDictionaryStringTo<Object> = {
                 ["System.Title"]: "Sub Task of " + parentTitle,
@@ -286,8 +212,10 @@ export class Model {
                 ["System.AreaId"]: "76"
                 //["Custom.Severityfield"]: severity
             }
-            if (taskType == "I Task")
+            if (taskType == "I Task") {
                 init["Custom.TaskDescription"] = parentDescription;
+                init["Custom.Title"] = "Task of " + parentTitle;
+            }
             service.openNewWorkItem(taskType, init).then((newWorkItem: WorkItem) => {
                 let document: JsonPatchDocument;
                 let tempDoc: Array<documentBuild> = [];

@@ -7,14 +7,17 @@ export class View {
         var container = $("<div />");
         container.addClass("container");
         container.addClass("wrap");
-        model.buttonList.forEach(element => {
+        let index:number=0;
+        model.buttonFunctionList.forEach(element => {
             let actionButton = $("<button />");
             actionButton.addClass("buttons");
-            actionButton.text(" " + element + " ");
+            // actionButton.text(" " + element + " ");
+            actionButton.text(" " + model.buttonNameList[index] + " ");
             actionButton.click(() => { model.buttonPressed(element); });
             // container.append(newLine);
             container.append(actionButton);
             // container.append($("<br />"));
+            index++;
         });
         $("body").append(container);
         VSS.resize();

@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.126",
+    "version": "1.1.133",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -98,9 +98,26 @@
                 "uri": "index.html",
                 "height": 200,
                 "inputs": [{
-                        "id": "DataTransfer",
-                        "name": "Button name, can be more then one by using ;",
-                        "description": "The field pass Data from the work item to the Action Code.",
+                        "id": "ButtonsNames",
+                        "name": "Buttons names",
+                        "description": "The field pass the button text, (can be more then one by using ,) .",
+                        "type": "TextArea",
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "ActionsNames",
+                        "name": "Actions names (New Work Item/Not a Bug/Convert Work Item/Command)",
+                        "description": "The field pass the function names,(can be more then one by using ,).",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [
@@ -117,7 +134,7 @@
                     {
                         "id": "FieldsToCopy",
                         "name": "Fields To Copy",
-                        "description": "Fields List witch you want to copy (when using copy or new work item func).seperated by ;",
+                        "description": "Fields List witch you want to copy (when using copy or new work item func).seperated by ,",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [
@@ -133,7 +150,7 @@
                     },
                     {
                         "id": "TargetType",
-                        "name": "TargetType",
+                        "name": "Work Item Target Type",
                         "description": "The field pass the target work item type - will be used if using copy or create function.",
                         "type": "TextArea",
                         "properties": {
@@ -150,7 +167,7 @@
                     },
                     {
                         "id": "TargetProject",
-                        "name": "Target Project",
+                        "name": "Target Project Name",
                         "description": "The field pass the target project - will be used if using copy or create function.",
                         "type": "TextArea",
                         "properties": {
@@ -163,6 +180,32 @@
                         "validation": {
                             "dataType": "String",
                             "isRequired": false
+                        }
+                    },
+                    {
+                        "id": "PreTitel",
+                        "name": "Pre Title",
+                        "description": "The field pass the string you want to add to the title.",
+                        "type": "TextArea",
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": false
+                        }
+                    },
+                    {
+                        "id": "LinkToParent",
+                        "name": "Create Child Link",
+                        "description": "Mark if you want it to be linked to the parent",
+                        "inputMode": "CheckBox",
+                        "validation": {
+                            "dataType": "Boolean"
                         }
                     }
                 ]
