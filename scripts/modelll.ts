@@ -15,6 +15,7 @@ export class Model {
     public buttonFunctionList: Array<string>;
     public buttonNameList: Array<string>;
     public fieldsList: Array<string>;
+    public fieldsValues: Array<string>;
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType: string;
     private targetProject: string;
@@ -25,6 +26,8 @@ export class Model {
         this.titelPrev = titelPrev;
         this.linkToParent = linkToParent;
         fieldsToCopy = "System.Id," + fieldsToCopy;
+        let fieldsValues = ",";// + fieldsValues -> when i will want to add values
+        this.fieldsValues = fieldsValues.split(",");
         this.fieldsList = fieldsToCopy.split(",");
         let flag = false;
         this.fieldsList.forEach(element => {
@@ -36,7 +39,7 @@ export class Model {
         this.workItemType = targetType;
         this.targetProject = targetProject;
         this.buttonFunctionList = buttonActions.split(",");
-        this.buttonNameList=buttonsNames.split(",");
+        this.buttonNameList = buttonsNames.split(",");
         this.client = RestClient.getClient();
     }
     public buttonPressed(pressed: string): void {
@@ -54,10 +57,6 @@ export class Model {
                 break;
             }
             case "New Sub Task": {
-                this.HPNewWit()
-                break;
-            }
-            case "Duplicate": {
                 this.HPNewWit()
                 break;
             }
@@ -112,12 +111,19 @@ export class Model {
         else {
             FieldsList["System.Title"] = this.titelPrev
         }
+        let index = 0;
         this.fieldsList.forEach(element => {
+            let value = FieldsList[element] ? FieldsList[element].toString() : '';
+            // add when want to set values 
+            // if (this.fieldsValues[index] != "") {  
+            //     value = this.fieldsValues[index];
+            // }
             element = element.trim();
             if (element != "" && element != "System.Id" && element! + "System.TeamProject") {
-                var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
+                var x: documentBuild = { op: "add", path: "/fields/" + element, value: value };
                 tempDoc.push(x);
             }
+            index++;
         });
         document = tempDoc;
         this.client.createWorkItem(document, this.targetProject, this.workItemType, null, true).then(async (newWorkItem) => {
