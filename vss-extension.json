@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.134",
+    "version": "1.1.136",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -100,7 +100,7 @@
                 "inputs": [{
                         "id": "ButtonsNames",
                         "name": "Buttons names",
-                        "description": "The field pass the button text, (can be more then one by using ,) .",
+                        "description": "This field will be what the button is named on your page, (can be more then one by using ,) .",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [
@@ -117,7 +117,7 @@
                     {
                         "id": "ActionsNames",
                         "name": "Actions names (New Work Item/Not a Bug/Convert Work Item/Command)",
-                        "description": "The field pass the function names,(can be more then one by using ,).",
+                        "description": "This is the action your button will perform,(can be more then one by using ,).",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [
@@ -168,7 +168,7 @@
                     {
                         "id": "TargetProject",
                         "name": "Target Project Name",
-                        "description": "The field pass the target project - will be used if using copy or create function.",
+                        "description": "The field passes the target project name (default is the actual project) - will be used if using copy or create function.",
                         "type": "TextArea",
                         "properties": {
                             "workItemFieldTypes": [

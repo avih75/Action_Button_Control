@@ -72,22 +72,6 @@ export class Model {
             }
         }
     }
-    private NotABug() {
-        WorkItemFormService.getService().then(
-            (service) => {
-                service.getFieldValues(this.fieldsList).then((values) => {
-                    this.ConvertWorkItem(values, true);
-                })
-            });
-    }
-    private ConvertWit() {
-        WorkItemFormService.getService().then(
-            (service) => {
-                service.getFieldValues(this.fieldsList).then((values) => {
-                    this.ConvertWorkItem(values);
-                })
-            });
-    }
     private CreateNewWit() {
         WorkItemFormService.getService().then(
             (service) => {
@@ -113,15 +97,17 @@ export class Model {
         }
         let index = 0;
         this.fieldsList.forEach(element => {
-            let value = FieldsList[element] ? FieldsList[element].toString() : '';
-            // add when want to set values 
-            // if (this.fieldsValues[index] != "") {  
-            //     value = this.fieldsValues[index];
-            // }
-            element = element.trim();
-            if (element != "" && element != "System.Id" && element! + "System.TeamProject") {
-                var x: documentBuild = { op: "add", path: "/fields/" + element, value: value };
-                tempDoc.push(x);
+            if (FieldsList[element] && FieldsList[element] != null && FieldsList[element] != "") {
+                let value = FieldsList[element];
+                // add when want to set values 
+                // if (this.fieldsValues[index] != "") {  
+                //     value = this.fieldsValues[index];
+                // }
+                element = element.trim();
+                if (element != "" && element != "System.Id" && element! + "System.TeamProject") {
+                    var x: documentBuild = { op: "add", path: "/fields/" + element, value: value };
+                    tempDoc.push(x);
+                }
             }
             index++;
         });
@@ -160,6 +146,22 @@ export class Model {
                         }
                     })
         });
+    }
+    private NotABug() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues(this.fieldsList).then((values) => {
+                    this.ConvertWorkItem(values, true);
+                })
+            });
+    }
+    private ConvertWit() {
+        WorkItemFormService.getService().then(
+            (service) => {
+                service.getFieldValues(this.fieldsList).then((values) => {
+                    this.ConvertWorkItem(values);
+                })
+            });
     }
     private ConvertWorkItem(FieldsList: IDictionaryStringTo<Object>, closeTheSource: boolean = false) {
         let project: string = FieldsList["System.TeamProject"].toString();
