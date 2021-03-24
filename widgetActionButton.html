@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="scripts/VSS.SDK.min.js"></script>
+    <script type="text/javascript">
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformStyles: true
+        });
+        VSS.require(["scripts/appWidget"], function() {
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="widget">
+        <h2 class="title" style="margin-left: 15px;"></h2>
+        <div id="buttons-container"></div>
+    </div>
+</body>
+
+</html>

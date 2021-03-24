@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.136",
+    "version": "1.1.164",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -80,6 +80,14 @@
         },
         {
             "path": "configActionButton.html",
+            "addressable": true
+        },
+        {
+            "path": "widgetActionButton.html",
+            "addressable": true
+        },
+        {
+            "path": "widgetConfiguration.html",
             "addressable": true
         }
     ],
@@ -222,6 +230,39 @@
                 "name": "Action Button",
                 "uri": "configActionButton.html",
                 "order": 99
+            }
+        },
+        {
+            "id": "ButtonsWidget",
+            "type": "ms.vss-dashboards-web.widget",
+            "targets": [
+                "ms.vss-dashboards-web.widget-catalog",
+                ".ActionButtonWidget.Configuration"
+            ],
+            "properties": {
+                "name": "Action Button Widget",
+                "description": "Add action button",
+                "catalogIconUrl": "img/CatalogIcon.png",
+                "previewImageUrl": "img/preview.png",
+                "uri": "widgetActionButton.html",
+                "isNameConfigurable": true,
+                "supportedSizes": [{
+                    "rowSpan": 1,
+                    "columnSpan": 1
+                }],
+                "supportedScopes": ["project_team"]
+            }
+        },
+        {
+            "id": "ActionButtonWidget.Configuration",
+            "type": "ms.vss-dashboards-web.widget-configuration",
+            "targets": [
+                "ms.vss-dashboards-web.widget-configuration"
+            ],
+            "properties": {
+                "name": "ActionButtonWidget Configuration",
+                "description": "Configures ActionButtonWidget",
+                "uri": "widgetConfiguration.html"
             }
         }
     ]

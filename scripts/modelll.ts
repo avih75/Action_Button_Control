@@ -15,22 +15,37 @@ export class Model {
     public buttonFunctionList: Array<string>;
     public buttonNameList: Array<string>;
     public fieldsList: Array<string>;
+    public targetFieldsList: Array<string>;
     public fieldsValues: Array<string>;
     private client: RestClient.WorkItemTrackingHttpClient4_1;
     private workItemType: string;
     private targetProject: string;
     private linkToParent: boolean;
     private titelPrev: string;
+    private mapFields: boolean;
+    private mapValues: boolean
 
-    constructor(buttonActions: string, buttonsNames: string, targetType: string, fieldsToCopy: string, targetProject: string, titelPrev: string, linkToParent: boolean) {
+    constructor(buttonActions: string, buttonsNames: string, targetType: string, fieldsToCopy: string, targetProject: string,
+        titelPrev: string, linkToParent: boolean, fieldsValues: string, targetFieldsList: string) {
         this.titelPrev = titelPrev;
         this.linkToParent = linkToParent;
         fieldsToCopy = "System.Id," + fieldsToCopy;
-        let fieldsValues = ",";// + fieldsValues -> when i will want to add values
-        this.fieldsValues = fieldsValues.split(",");
         this.fieldsList = fieldsToCopy.split(",");
+        if (targetFieldsList != null && targetFieldsList != "") {
+            this.targetFieldsList = targetFieldsList.split(",");
+            if (this.targetFieldsList.length == this.fieldsList.length) {
+                this.mapFields = true;
+            }
+        }
+        if (fieldsValues != null && fieldsValues != "") {
+            this.fieldsValues = fieldsValues.split(",");
+            if (this.fieldsValues.length == this.fieldsList.length) {
+                this.mapValues = true;
+            }
+        }
         let flag = false;
         this.fieldsList.forEach(element => {
+            element = element.trim();
             if (element == "System.TeamProject")
                 flag = true;
         });
@@ -41,7 +56,7 @@ export class Model {
         this.buttonFunctionList = buttonActions.split(",");
         this.buttonNameList = buttonsNames.split(",");
         this.client = RestClient.getClient();
-    }
+    } 
     public buttonPressed(pressed: string): void {
         switch (pressed) {
             case "Convert Work Item": {
@@ -67,6 +82,15 @@ export class Model {
             case "Command": {
                 this.RunString(pressed);
             }
+            case "Create Work Item": {
+                this.WidgetCreateWorkItem(this.workItemType);
+            }
+            case "Create Bulk of Work Items": {
+                this.WidgetCreateWorkItem(this.workItemType);
+            }
+            case "Open Query URL": {
+                this.RunString(pressed);
+            }
             default: {
                 this.CreateNewWit();
             }
@@ -76,8 +100,7 @@ export class Model {
         WorkItemFormService.getService().then(
             (service) => {
                 service.getFieldValues(this.fieldsList).then((values) => {
-                    this.CreateNewWorkItem(values);
-                    //this.createNewWorkItem3(values);
+                    this.CreateNewWorkItem(values); 
                 })
             });
     }
@@ -98,11 +121,7 @@ export class Model {
         let index = 0;
         this.fieldsList.forEach(element => {
             if (FieldsList[element] && FieldsList[element] != null && FieldsList[element] != "") {
-                let value = FieldsList[element];
-                // add when want to set values 
-                // if (this.fieldsValues[index] != "") {  
-                //     value = this.fieldsValues[index];
-                // }
+                let value = FieldsList[element].toString(); 
                 element = element.trim();
                 if (element != "" && element != "System.Id" && element! + "System.TeamProject") {
                     var x: documentBuild = { op: "add", path: "/fields/" + element, value: value };
@@ -167,27 +186,20 @@ export class Model {
         let project: string = FieldsList["System.TeamProject"].toString();
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
-        let tempDoc: Array<documentBuild> = [];
-        // need to get the url
-        this.fieldsList.forEach(element => {
-            let x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
+        let tempDoc: Array<documentBuild> = []; 
+        if (id != '') { 
+            let x: documentBuild = { op: "add", path: "/fields/System.WorkItemType", value: this.workItemType };
             tempDoc.push(x);
-        });
-        if (id != '') {
-            this.client.getWorkItem(+id).then((workitem) => {
-                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem } })
-            }).then(() => {
-                document = tempDoc;  // test the new use
-                this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                });
-            })
+            document = tempDoc;
+            this.client.updateWorkItem(document, +id, this.targetProject, null, true);
         }
-        else {
-            document = tempDoc;  // test the new use
-            this.client.createWorkItem(document, project, this.workItemType).then((newWorkItem) => {
-                if (closeTheSource)
-                    this.closeStateSave();
+        else { 
+            this.fieldsList.forEach(element => {
+                let x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element] ? FieldsList[element].toString() : '' };
+                tempDoc.push(x);
             });
+            document = tempDoc;
+            this.client.createWorkItem(document, this.targetProject, this.workItemType);
         }
     }
     private closeStateSave() {
@@ -206,7 +218,7 @@ export class Model {
                     if (value["System.Id"])
                         id = value["System.Id"].toString();
                     this.HPCreateNewTask(this.workItemType, value["System.Title"].toString(), value["System.Description"].toString(),
-                        id, value["Custom.Stages"].toString());//, value["Custom.Severityfield"].toString());
+                        id, value["Custom.Stages"].toString());
                 })
             }
         );
@@ -217,12 +229,11 @@ export class Model {
                 ["System.Title"]: "Sub Task of " + parentTitle,
                 ["System.Description"]: parentDescription,
                 ["Custom.Stages"]: stage,
-                ["System.AreaId"]: "76"
-                //["Custom.Severityfield"]: severity
+                ["System.AreaId"]: "76" 
             }
             if (taskType == "I Task") {
                 init["Custom.TaskDescription"] = parentDescription;
-                init["Custom.Title"] = "Task of " + parentTitle;
+                init["System.Title"] = "Task of " + parentTitle;
             }
             service.openNewWorkItem(taskType, init).then((newWorkItem: WorkItem) => {
                 let document: JsonPatchDocument;
@@ -233,7 +244,7 @@ export class Model {
                             this.client.getWorkItem(+parentId).then((workitem) => {
                                 tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
                             }).then(() => {
-                                document = tempDoc;  // test the new use
+                                document = tempDoc; 
                                 this.client.updateWorkItem(document, newWorkItem.id);
                             }).then(() => {
                                 service2.getWorkItemRelations().then((x) => {
@@ -267,5 +278,21 @@ export class Model {
     }
     private RunAction(command: string) {
         return eval(command);
+    }
+    private WidgetCreateWorkItem(taskType:string) {
+        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+            let init: IDictionaryStringTo<Object> = {
+                ["System.Title"]: "New" + taskType
+            }
+            service.openNewWorkItem(taskType, init); 
+        })
+    }
+    private HPCreateBulkWorkItems(taskType:string) {
+        WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+            let init: IDictionaryStringTo<Object> = {
+                ["System.Title"]: "New" + taskType
+            }
+            service.openNewWorkItem(taskType, init); 
+        })
     }
 }

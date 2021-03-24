@@ -1,15 +1,4 @@
-import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
-import { JsonPatchDocument } from "VSS/WebApi/Contracts";
-import RestClient = require("TFS/WorkItemTracking/RestClient");
-import WorkItemService = require("TFS/WorkItemTracking/Services");
-import Work = require("TFS/Work/RestClient");
-import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
-import { GetCommand } from "./StorageHelper";
-
-let x = Work.getClient();
-x.
-
-
+import WorkItemService = require("TFS/WorkItemTracking/Services"); 
 export class Model2Widget {
     public buttonPressed(pressed: string, type: string): void {
         switch (pressed) {

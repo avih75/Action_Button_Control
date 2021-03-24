@@ -44,8 +44,7 @@ function AddFuncToListView(funcName: string) {
     div.append($("<label />").text(funcName));
     let delButton = $("<button />").text("X");
     delButton.click(() => {
-        let x: boolean = true;
-        // alert box yes/no
+        let x: boolean = true; 
         if (x) {
             DellFunction(funcName);
             div.remove();

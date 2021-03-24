@@ -17,7 +17,8 @@ Right now there is only one action, the 'convert work item', it copy the work it
 this can give you the option to add several button to your form.
 and give each button the functionality you need. (from the given list)
 
-## Variablel
+## WorkItem  Action Button
+### Variablel
 * Buttons names         - List of button name (text) seperated by "," sign.
 * Actions names         - List of Action names (from the given option) seperated by "," must be for each button name a function
 * Fields To Copy        - List of fields refnames (seperated by ",") that need to be copy
@@ -25,13 +26,25 @@ and give each button the functionality you need. (from the given list)
 * Target Project Name   - Pass the new project name (default uses the same project)
 * Pre Title             - Pass the text you want to add/set to the new work item
 * Create Child Link     - Mark if you want to create link with the new work item as a child
-## Configuration
+
+To get your corect field refname open you browser and brows to : http://{ServerURL}/{CollectionName}/{ProjectName}/_apis/wit/fields
+it will return the full work items fields list with all the properties
+find your field and get the full refname.
+### Configuration
 
 ![Hit Count Control](img/Screenshot_1.png)
 ![Hit Count Control](img/Screenshot_2.png)
 ![Hit Count Control](img/Screenshot_3.png)
 ![Hit Count Control](img/Screenshot_4.png)
 
+## Dashboard Action Button
+
+### Variable
+* a
+* a
+* a
+
+### Configuration
 # Source code 
 
 The [source](https://github.com/avih75/Action_Button_Control.git) 

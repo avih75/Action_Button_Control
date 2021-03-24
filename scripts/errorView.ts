@@ -1,24 +1,14 @@
-/***************************************************************************
-Purpose: This class is being used to get errors from an input parser and 
-            a model. It takes all the errors and put them in an array in
-            order to be sent to a view to display them.       
-***************************************************************************/
-
-// shows the errors in the control container rather than the control.
 export class ErrorView {
 
-    constructor(error: string) {
-        // container div
+    constructor(error: string) { 
         var container = $("<div />");
         container.addClass("container");
-
-        // create an icon and text for the error
+ 
         var warning = $("<p />");
         warning.text(error);
         warning.attr("title", error);
         container.append(warning);
-
-        // include documentation link for help.
+ 
         var help = $("<p />");
         help.text("See ");
 
