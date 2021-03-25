@@ -1,9 +1,9 @@
-import WidgetHelpers = require("TFS/Dashboards/WidgetHelpers"); 
-import { Model2Widget } from "./model2Widget"; 
+import WidgetHelpers = require("TFS/Dashboards/WidgetHelpers");
+import { Model2Widget } from "./model2Widget";
 
 WidgetHelpers.IncludeWidgetStyles();
-VSS.register("ButtonsWidget", function () { 
-    let getQueryInfo = function (widgetSettings) { 
+VSS.register("ButtonsWidget", function () {
+    let getQueryInfo = function (widgetSettings) {
         var settings = JSON.parse(widgetSettings.customSettings.data);
         let container = $('#buttons-container');
         if (!settings || !settings.buttons) {
@@ -11,7 +11,7 @@ VSS.register("ButtonsWidget", function () {
             container.text("Sorry nothing to show, please configure a buttons");
             return WidgetHelpers.WidgetStatusHelper.Success();
         }
-        else { 
+        else {
             let model = new Model2Widget();
             container.empty();
             let buttonsQuantity: string[] = settings.buttons.split(';');
@@ -21,19 +21,29 @@ VSS.register("ButtonsWidget", function () {
                     let $buttonElement = $('<button>');
                     $buttonElement.text(val[0]);
                     $buttonElement.click(() => {
-                        model.buttonPressed(val[1], val[2]); 
+                        if (val[1] == "Create Requisition") {
+                            let inputData: string = $("#inputData").val();
+                            if (inputData && inputData != "")
+                                model.buttonPressed(val[1], inputData);
+                            else
+                                alert("No PNs Ids");
+                        }
+                        else {
+                            model.buttonPressed(val[1], val[2]);
+                        }
                     })
                     container.append($buttonElement);
+                    container.append($("<br/>"));
                 }
-            }); 
+            });
             return WidgetHelpers.WidgetStatusHelper.Success();
         }
     }
     return {
-        load: function (widgetSettings) { 
+        load: function (widgetSettings) {
             return getQueryInfo(widgetSettings);
         },
-        reload: function (widgetSettings) { 
+        reload: function (widgetSettings) {
             return getQueryInfo(widgetSettings);
         }
     }
