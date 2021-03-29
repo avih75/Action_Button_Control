@@ -1,11 +1,10 @@
 import { WorkItemFormNavigationService, WorkItemFormService } from "TFS/WorkItemTracking/Services";
-import { WorkItemTrackingHttpClient4_1, WorkItemTrackingHttpClient5 } from "TFS/WorkItemTracking/RestClient";
+import RestClient = require("TFS/WorkItemTracking/RestClient");
 import { WorkItem, WorkItemExpand } from "TFS/WorkItemTracking/Contracts";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import { documentBuild } from "./modelll";
 export class Model2Widget {
-    // private client: WorkItemTrackingHttpClient4_1;
-    private client: WorkItemTrackingHttpClient5;
+    private client: RestClient.WorkItemTrackingHttpClient4_1 = RestClient.getClient();
     public buttonPressed(pressed: string, data: string): void {
         switch (pressed) {
             case "Create Work Item": {
@@ -14,10 +13,6 @@ export class Model2Widget {
             }
             case "Create Requisition": {
                 this.WidgetCreateRequisition(data);
-                break;
-            }
-            case "Create Bulk of Work Items": {
-                this.WidgetCreateWorkItem(data);
                 break;
             }
             case "Open URL": {
@@ -38,86 +33,101 @@ export class Model2Widget {
         })
     }
     private WidgetCreateRequisition(id: string) {
-        WorkItemFormNavigationService.getService().then(async (service) => {
-
-            let Ids: Array<number> = new Array<number>();
-            let PNs = id.split(',');
-            PNs.forEach(pn => {
-                if (Number.isInteger(pn)) {
-                    Ids.push(Number.parseInt(pn));
-                }
-                else {
-                    alert("Wrong parts number ids");
-                    return;
-                }
-            });
-            let NonPOMPNs = await this.client.getWorkItems(Ids, null, null, WorkItemExpand.Fields);
-            let cost = 0;
-            let Currency = "";
-            let Supplier = "";
-            let Requestor = "";
-            let GlAccount = "";
-            let CostCenter = "";
-            let first: boolean;
-            let flag: boolean = true;
-            NonPOMPNs.forEach(PNid => {
-                if (first) {
-                    Currency = PNid.fields["Custom.Currency"] ? PNid.fields["Custom.Currency"] : "";
-                    Supplier = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
-                    Requestor = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
-                    GlAccount = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
-                    CostCenter = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
-                    cost = PNid.fields["Custom.Cost"];
-                }
-                else {
-                    let checkCurrency = PNid.fields["Custom.Currency"] ? PNid.fields["Custom.Currency"] : "";
-                    let checkSupplier = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
-                    let checkRequestor = PNid.fields["Custom.Requestor"] ? PNid.fields["Custom.Requestor"] : "";
-                    let checkGlAccount = PNid.fields["Custom.GlAccount"] ? PNid.fields["Custom.GlAccount"] : "";
-                    let checkCostCenter = PNid.fields["Custom.CostCenter"] ? PNid.fields["Custom.CostCenter"] : "";
-                    if ((Currency == checkCurrency) &&
-                        (Supplier == checkSupplier) &&
-                        (Requestor == checkRequestor) &&
-                        (GlAccount == checkGlAccount) &&
-                        (CostCenter == checkCostCenter)) {
-                        cost += PNid.fields["Custom.Cost"];
-                    }
-                    else {
-                        flag = false;
-                    }
-                }
-            });
-            if (flag) {
-                // make all the ids as linked
-                let init: IDictionaryStringTo<Object> = {
-                    ["System.Title"]: "New Requisition" + id,
-                    ["Custom.Currency"]: Currency,
-                    ["Custom.Supplier"]: Supplier,
-                    ["Custom.Requestor"]: Requestor,
-                    ["Custom.GlAccount"]: GlAccount,
-                    ["Custom.CostCenter"]: CostCenter,
-                    ["Custom.cost"]: cost
-                }
-                service.openNewWorkItem("Requisition", init).then((newWorkItem: WorkItem) => {
-                    let document: JsonPatchDocument;
-                    let tempDoc: Array<documentBuild> = [];
-                    WorkItemFormService.getService().then(
-                        (service2) => {
-                            // let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                            // let rel: WorkItemRelation = {
-                            //     attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                            //     rel: "System.LinkTypes.Hierarchy-Forward",
-                            //     url: newWorkItem.url
-                            // }
-                            // relations.push(rel);
-                            // service2.addWorkItemRelations(relations).then(() => { service2.refresh() });
-                        }
-                    );
-                })
+        let Ids: Array<number> = new Array<number>();
+        let PNs = id.split(';');
+        PNs.forEach(pn => {
+            if (Number(pn) != NaN) {
+                Ids.push(Number.parseInt(pn));
             }
             else {
-                alert("Data not align");
+                alert("Wrong parts number ids (number only): " + id);
+                return;
             }
+        });
+        if (Ids.length > 0)
+            try {
+                this.client.getWorkItems(Ids, null, null, WorkItemExpand.Fields).then((NonPOMPNs) => {
+                    if (NonPOMPNs.length == 0) {
+                        alert("Wrong parts number ids (not exists): " + id);
+                    }
+                    else {
+                        this.CreateRequisitionWithPN(NonPOMPNs);
+                    }
+                });
+            }
+            catch (ex) {
+                alert("There was a problem during handeling your request");
+            }
+        else
+            alert("No ids to create Requisition!");
+    }
+    private CreateRequisitionWithPN(NonPOMPNs: WorkItem[]) {
+        let cost = 0;
+        let Currency = "";
+        let Supplier = "";
+        let Requestor = "";
+        let GlAccount = "";
+        let CostCenter = "";
+        let DepartmentSection = "";
+        let BudgetType = "";
+        let first: boolean = true;
+        let flag: boolean = true;
+        let document: JsonPatchDocument;
+        let tempDoc: Array<documentBuild> = [];
+        NonPOMPNs.forEach(PNid => {
+            let checkCurrency = PNid.fields["Custom.Currency"] ? PNid.fields["Custom.Currency"] : "";
+            let checkSupplier = PNid.fields["Custom.Supplier"] ? PNid.fields["Custom.Supplier"] : "";
+            let checkRequestor = PNid.fields["Custom.Requestor"] ? PNid.fields["Custom.Requestor"] : "";
+            let checkGlAccount = PNid.fields["Custom.G_LAccount"] ? PNid.fields["Custom.G_LAccount"] : "";
+            let checkCostCenter = PNid.fields["Custom.CostCenter_"] ? PNid.fields["Custom.CostCenter_"] : "";
+            BudgetType = PNid.fields["Custom.BudgetType"] ? PNid.fields["Custom.BudgetType"] : "";
+            DepartmentSection = PNid.fields["Custom.DepartmentandSection"];
+            let checkPrice = Number.parseInt(PNid.fields["Custom.PriceperUOM"]);
+            let checkQuantity = Number.parseInt(PNid.fields["Custom.Quantity"]);
+            cost += checkPrice * checkQuantity;
+            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Related", url: PNid.url } })
+            if (first) {
+                Currency = checkCurrency;
+                Supplier = checkSupplier;
+                Requestor = checkRequestor;
+                GlAccount = checkGlAccount;
+                CostCenter = checkCostCenter;
+                first = false;
+            }
+            else {
+                if (!((Currency == checkCurrency) &&
+                    (Supplier == checkSupplier) &&
+                    (Requestor == checkRequestor) &&
+                    (GlAccount == checkGlAccount) &&
+                    (CostCenter == checkCostCenter))) {
+                    flag = false;
+                }
+            }
+        });
+        document = tempDoc;
+        if (flag) {
+            let init: IDictionaryStringTo<Object> = {
+                ["System.Title"]: "New Requisition",
+                ["Custom.Currency"]: Currency,
+                ["Custom.Supplier"]: Supplier,
+                ["Custom.Requestor"]: Requestor,
+                ["Custom.G_LAccount"]: GlAccount,
+                ["Custom.CostCenter_"]: CostCenter,
+                ["Custom.OrderCost"]: cost,
+                ["Custom.DepartmentandSection"]: DepartmentSection,
+                ["Custom.BudgetType"]: BudgetType
+            }
+            this.CreateTheRequsition(init, document);
+        }
+        else {
+            alert("Data not align");
+        }
+    }
+    private CreateTheRequsition(init: IDictionaryStringTo<Object>, document: JsonPatchDocument) {
+        WorkItemFormNavigationService.getService().then((service) => {
+            service.openNewWorkItem("Requisition", init).then((newWorkItem: WorkItem) => {
+                this.client.updateWorkItem(document, newWorkItem.id);
+            }); 
         })
     }
 }
