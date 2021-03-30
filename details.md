@@ -1,12 +1,12 @@
 # Make Azure DevOps more interactive
 
 ![Layout Customization](img/Form.png)
-![Layout Customization](img/Widget.png)
+![Layout Customization](img/A1.png)
 
 # Triger an Action with a single click
 
 ![Hit Count Control](img/Screenshot_5.png)
-![Hit Count Control](img/ScreenshotB_5.png)
+![Hit Count Control](img/A3.png)
 
 Right now there is only one action, the 'convert work item', it copy the work item Basic fields to new and difrent work item
 
@@ -44,20 +44,19 @@ find your field and get the full refname.
 
 ### Variable
 
-* Button Name - the content of the button
-* Action      - the action function you want to use
-* Data        - data you want to pass to the action
+* Button Title    - the content of the button
+* Button Function - the action function you want to use
+* Data Infos      - data you want to pass to the action
 
-	- "Create Work Item" 	- this action open new work item, the data field represent the work itm type
-	- "Create Requisition" 	- this action open new work item name Requsition, the data contains list of wits names seperated with ';' to link to it.
-	- "Open URL"			- this action open new browser tab and the data is the url address
-
+	- "Create Work Item" 	- action open new work item, the data field represent the work itm type
+	- "Create Requisition" 	- action open new work item name Requsition, the data contains list of wits names seperated with ',' to link to it.
+	- "Open URL"			- action open new browser tab and the data is the url address
+	- "+"                   - add the button
+	- "-"					- remove a button
 ### Configuration
 
-![Hit Count Control](img/ScreenshotC_1.png)
-![Hit Count Control](img/ScreenshotC_1.png)
-![Hit Count Control](img/ScreenshotC_1.png)
-![Hit Count Control](img/ScreenshotC_1.png)
+![Hit Count Control](img/A2.png)
+![Hit Count Control](img/A4.png) 
 
 # Source code 
 
