@@ -21,15 +21,16 @@ VSS.register("ButtonsWidget", function () {
                     let $buttonElement = $('<button>');
                     $buttonElement.text(val[0]);
                     $buttonElement.click(() => {
+                        let input = $("#inputData");
                         if (val[1] == "Create Requisition") {
-                            let inputData: string = $("#inputData").val();
+                            let inputData: string = input.val();
                             if (inputData && inputData != "")
-                                model.buttonPressed(val[1], inputData);
+                                model.buttonPressed(val[1], inputData,input,$buttonElement);
                             else
                                 alert("No PNs Ids");
                         }
                         else {
-                            model.buttonPressed(val[1], val[2]);
+                            model.buttonPressed(val[1], val[2],input,$buttonElement);
                         }
                     })
                     container.append($buttonElement);
