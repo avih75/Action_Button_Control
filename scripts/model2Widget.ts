@@ -20,7 +20,7 @@ export class Model2Widget {
                 break;
             }
             case "Open URL": {
-                window.open(data, '_blank');
+                window.open(data);
                 break;
             }
             default: {
@@ -129,7 +129,7 @@ export class Model2Widget {
         if (flag) {
             let init: IDictionaryStringTo<Object> = {
                 ["System.Title"]: "New Requisition",
-                ["Custom.Currency"]: Currency,
+                ["Custom.OrderCurrency"]: Currency,
                 ["Custom.Supplier"]: Supplier,
                 ["Custom.Requestor"]: Requestor,
                 ["Custom.G_LAccount"]: GlAccount,

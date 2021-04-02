@@ -20,6 +20,8 @@ VSS.register("ButtonsWidget", function () {
                 if (val.length > 0) {
                     let $buttonElement = $('<button>');
                     $buttonElement.text(val[0]);
+                    $buttonElement.css("width","100%");
+                    $buttonElement.css("margin-top","5px");
                     $buttonElement.click(() => {
                         let input = $("#inputData");
                         if (val[1] == "Create Requisition") {
