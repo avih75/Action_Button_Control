@@ -12,14 +12,25 @@
             VSS.notifyLoadSucceeded();
         });
     </script>
-
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .aToButton {
+            background-color: #EEEEEE;
+            border: 1px solid #CCCCCC;
+        }
+    </style>
 </head>
 
 <body>
     <div class="widget">
-        <h2 class="title" style="margin-left: 15px;"></h2>
+        <h4 class="title" style="margin-left: 15px;">Actions</h4>
         <div id="buttons-container"></div>
-        <input type="text" id="inputData" style="margin-top: 5px;width: 100%;" />
+        <!-- <input type="text" id="inputData" style="margin-top: 5px;width: 100%;" /> -->
     </div>
 </body>
 

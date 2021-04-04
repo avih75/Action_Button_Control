@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.190",
+    "version": "1.1.212",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -248,6 +248,9 @@
                 "isNameConfigurable": true,
                 "supportedSizes": [{
                     "rowSpan": 1,
+                    "columnSpan": 1
+                }, {
+                    "rowSpan": 2,
                     "columnSpan": 1
                 }],
                 "supportedScopes": ["project_team"]

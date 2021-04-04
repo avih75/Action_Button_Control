@@ -3,6 +3,7 @@ import RestClient = require("TFS/WorkItemTracking/RestClient");
 import { WorkItem, WorkItemExpand, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import { documentBuild } from "./modelll";
+ 
 export class Model2Widget {
     $button: JQuery;
     $text: JQuery;
@@ -163,5 +164,5 @@ export class Model2Widget {
                 }
             });
         })
-    }
+    } 
 }

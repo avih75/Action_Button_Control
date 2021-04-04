@@ -13,30 +13,56 @@ VSS.register("ButtonsWidget", function () {
         }
         else {
             let model = new Model2Widget();
-            container.empty();
+            $('.Title').text(settings.Title)
             let buttonsQuantity: string[] = settings.buttons.split(';');
             buttonsQuantity.forEach(button => {
                 let val: string[] = button.split(',');
                 if (val.length > 0) {
-                    let $buttonElement = $('<button>');
-                    $buttonElement.text(val[0]);
-                    $buttonElement.css("width","100%");
-                    $buttonElement.css("margin-top","5px");
-                    $buttonElement.click(() => {
-                        let input = $("#inputData");
-                        if (val[1] == "Create Requisition") {
-                            let inputData: string = input.val();
+                    let $jqueryElemnt: JQuery;
+                    if (val[1] == "Open URL") {
+                        $jqueryElemnt = $('<div>');
+                        let $a = $('<a>');
+                        $jqueryElemnt.addClass("aToButton");
+                        $jqueryElemnt.css("height", "25px");
+                        $a.attr("href", val[2]);
+                        //$jqueryElemnt.addClass("text-align", "center");
+                        $a.attr("target", "_parent");
+                        $a.text(val[0]);
+                        $a.css("color", "black");
+                        $a.addClass("center");
+                        $jqueryElemnt.append($a);
+                    }
+                    else if (val[1] == "Create Requisition") {
+                        $jqueryElemnt = $('<div>');
+                        let $input = $('<input>');
+                        $input.attr('type', 'text');
+                        $input.css("width", "100%");
+                        $input.css("margin-top", "5px");
+                        let $button = $('<button>');
+                        $button.text(val[0]);
+                        $button.css("height","25px");
+                        $button.css("width", "100%");
+                        $button.click(() => {
+                            let inputData: string = $input.val();
                             if (inputData && inputData != "")
-                                model.buttonPressed(val[1], inputData,input,$buttonElement);
+                                model.buttonPressed(val[1], inputData, $input, $jqueryElemnt);
                             else
                                 alert("No PNs Ids");
-                        }
-                        else {
-                            model.buttonPressed(val[1], val[2],input,$buttonElement);
-                        }
-                    })
-                    container.append($buttonElement);
-                    container.append($("<br/>"));
+                        });
+                        $jqueryElemnt.append($button);
+                        $jqueryElemnt.append($input);
+                    }
+                    else {
+                        $jqueryElemnt = $('<button>');
+                        $jqueryElemnt.text(val[0]);
+                        $jqueryElemnt.click(() => {
+                            model.buttonPressed(val[1], val[2], null, $jqueryElemnt);
+                        });
+                        $jqueryElemnt.css("height", "25px");
+                    }
+                    $jqueryElemnt.css("width", "100%");
+                    $jqueryElemnt.css("margin-top", "5px");
+                    container.append($jqueryElemnt);
                 }
             });
             return WidgetHelpers.WidgetStatusHelper.Success();
