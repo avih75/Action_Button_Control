@@ -23,12 +23,11 @@ VSS.register("ButtonsWidget", function () {
                         $jqueryElemnt = $('<div>');
                         let $a = $('<a>');
                         $jqueryElemnt.addClass("aToButton");
-                        $jqueryElemnt.css("height", "25px");
-                        $a.attr("href", val[2]);
-                        //$jqueryElemnt.addClass("text-align", "center");
+                        $jqueryElemnt.css("height", "30px");
+                        $a.attr("href", val[2]); 
                         $a.attr("target", "_parent");
                         $a.text(val[0]);
-                        $a.css("color", "black");
+                        $a.css("color", "white");
                         $a.addClass("center");
                         $jqueryElemnt.append($a);
                     }
@@ -40,8 +39,11 @@ VSS.register("ButtonsWidget", function () {
                         $input.css("margin-top", "5px");
                         let $button = $('<button>');
                         $button.text(val[0]);
-                        $button.css("height","25px");
+                        $button.css("height", "30px");
                         $button.css("width", "100%");
+                        $button.css("background-color", "blue");
+                        $button.css("font-size", "medium");
+                        $button.css("color", "white");
                         $button.click(() => {
                             let inputData: string = $input.val();
                             if (inputData && inputData != "")
@@ -54,11 +56,14 @@ VSS.register("ButtonsWidget", function () {
                     }
                     else {
                         $jqueryElemnt = $('<button>');
+                        $jqueryElemnt.css("background-color", "blue");
                         $jqueryElemnt.text(val[0]);
+                        $jqueryElemnt.css("font-size", "medium");
+                        $jqueryElemnt.css("color", "white");
                         $jqueryElemnt.click(() => {
                             model.buttonPressed(val[1], val[2], null, $jqueryElemnt);
                         });
-                        $jqueryElemnt.css("height", "25px");
+                        $jqueryElemnt.css("height", "30px");
                     }
                     $jqueryElemnt.css("width", "100%");
                     $jqueryElemnt.css("margin-top", "5px");
