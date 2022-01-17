@@ -25,9 +25,9 @@ and give each button the functionality you need. (from the given list)
 * Buttons names         - List of button name (text) seperated by "," sign.
 * Actions names         - List of Action names (from the given option) seperated by "," must be for each button name a function
 * Fields To Copy        - List of fields refnames (seperated by ",") that need to be copy
-* Work Item Target Type - Pass the new work item type neede (default uses the same work item type)
+* Work Item Target Types- Pass the new work item type neede (default uses the same work item type)
 * Target Project Name   - Pass the new project name (default uses the same project)
-* Pre Title             - Pass the text you want to add/set to the new work item
+* Pre Titles            - Pass the text you want to add/set to the new work item (list by ,)
 * Create Child Link     - Mark if you want to create link with the new work item as a child
 
 To get your corect field refname open you browser and brows to : http://{ServerURL}/{CollectionName}/{ProjectName}/_apis/wit/fields

@@ -9,7 +9,8 @@ export class View {
             let actionButton = $("<button />");
             actionButton.addClass("buttons");
             actionButton.text(" " + model.buttonNameList[index] + " ");
-            actionButton.click(() => { model.buttonPressed(element); });
+            let btnIndex = index;
+            actionButton.click(() => { model.buttonPressed(element,btnIndex); });
             container.append(actionButton);
             index++;
         });
