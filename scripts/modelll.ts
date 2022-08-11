@@ -3,8 +3,7 @@ import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemService = require("TFS/WorkItemTracking/Services");
 import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
-import { GetCommand } from "./StorageHelper";
-
+import { GetCommand } from "./StorageHelper"; 
 export class documentBuild {
     op: string;
     path: string;
@@ -21,16 +20,22 @@ export class Model {
     //private workItemType: string;
     private workItemTypes: Array<string>;
     private targetProject: string;
-    private linkToParent: boolean;
+    private linkToWit: Array<string>;
+    private buyPass: boolean;
+    private includeLinks: boolean;
+    private includeAttachments: boolean;
     //private titelPrev: string;
     private titelPrevs: Array<string>;
     private mapFields: boolean;
     private mapValues: boolean;
 
     constructor(buttonActions: string, buttonsNames: string, targetTypes: string, fieldsToCopy: string, targetProject: string,
-        titelPrev: string, linkToParent: boolean, fieldsValues: string, targetFieldsList: string) {
+        titelPrev: string, linkToWit: string, fieldsValues: string, targetFieldsList: string, buyPass: boolean, includeLinks: boolean, includeAttachments: boolean) {
         this.titelPrevs = titelPrev.split(",");
-        this.linkToParent = linkToParent;
+        this.linkToWit = linkToWit.split(",");
+        this.buyPass = buyPass;
+        this.includeLinks = includeLinks;
+        this.includeAttachments = includeAttachments;
         fieldsToCopy = "System.Id," + fieldsToCopy;
         this.fieldsList = fieldsToCopy.split(",");
         if (targetFieldsList != null && targetFieldsList != "") {
@@ -109,31 +114,40 @@ export class Model {
             });
     }
     private CreateNewWorkItem(FieldsList: IDictionaryStringTo<Object>,btnIndex: number) {
-        if (this.targetProject == "")
+        if (this.targetProject == ""){
             this.targetProject = FieldsList["System.TeamProject"].toString();
+        }
         const id = FieldsList["System.Id"] ? FieldsList["System.Id"].toString() : '';
         let document: JsonPatchDocument;
         let tempDoc: Array<documentBuild> = [];
-        if (this.targetProject == "")
+        if (this.targetProject == ""){
             FieldsList["System.TeamProject"] = this.targetProject;
+        }
         if (FieldsList["System.Title"]) {
             FieldsList["System.Title"] = this.titelPrevs[btnIndex] + " " + FieldsList["System.Title"].toString();
         }
         else {
-            //this.fieldsList.push("System.Title");
-            FieldsList["System.Title"] = this.titelPrevs[btnIndex];
+            if (this.titelPrevs[btnIndex] == null || this.titelPrevs[btnIndex] == "")
+            {
+                FieldsList["System.Title"] = "No Title!! Action Button Avi Hadad";
+            }
+            else{
+                FieldsList["System.Title"] = this.titelPrevs[btnIndex];
+            }
         }
-        //let index = 0;
         this.fieldsList.forEach(element => {
-            if (FieldsList[element] && FieldsList[element] != null && FieldsList[element] != "") {
-                let value = FieldsList[element].toString(); 
+            if (FieldsList[element] && FieldsList[element] != null && FieldsList[element] != "") {              
                 element = element.trim();
                 if (element != "" && element != "System.Id" && element != "System.TeamProject") {
-                    var x: documentBuild = { op: "add", path: "/fields/" + element, value: value };
+                    if (FieldsList[element] instanceof Date){
+                        var x: documentBuild = { op: "add", path: "/fields/" + element, value: new Date(FieldsList[element].toString()) }; //value
+                    }
+                    else{
+                        var x: documentBuild = { op: "add", path: "/fields/" + element, value: FieldsList[element].toString() }; //value
+                    }
                     tempDoc.push(x);
                 }
             }
-            //index++;
         });
         if (this.fieldsList.lastIndexOf("System.Title") == -1)
         {
@@ -142,43 +156,149 @@ export class Model {
                 var x: documentBuild = { op: "add", path: "/fields/System.Title", value: value };
                 tempDoc.push(x);                
             }
-            //index++;
         }
-        document = tempDoc;
-        this.client.createWorkItem(document, this.targetProject, this.workItemTypes[btnIndex], null, true).then(async (newWorkItem) => {
-            //alert("New " + this.workItemType + " created,in " + this.targetProject + ". ID : " + newWorkItem.id);
-            tempDoc = [];
-            if (this.linkToParent)
-                WorkItemFormService.getService().then(
-                    async (service2) => {
-                        if (id == "") {
-                            let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                            let rel: WorkItemRelation = {
-                                attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-                                rel: "System.LinkTypes.Hierarchy-Forward",
-                                url: newWorkItem.url
-                            }
-                            relations.push(rel);
-                            service2.addWorkItemRelations(relations).then(() => {
-                                WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-                                    service.openWorkItem(newWorkItem.id)
-                                })
-                            });
-                        }
-                        else {
-                            this.client.getWorkItem(+id).then((workitem) => {
-                                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: "System.LinkTypes.Hierarchy-Reverse", url: workitem.url } })
-                            }).then(() => {
-                                document = tempDoc;  // test the new use
-                                this.client.updateWorkItem(document, newWorkItem.id).then(() => {
-                                    WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-                                        service.openWorkItem(newWorkItem.id)
-                                    })
-                                });
-                            });
-                        }
-                    })
+        document = tempDoc; 
+        let workItemType: string = (this.workItemTypes[btnIndex]!=null && this.workItemTypes[btnIndex] != "")? this.workItemTypes[btnIndex] : "Child";
+        this.client.createWorkItem(document, this.targetProject, workItemType, null, this.buyPass).then(async (newWorkItem) => {
+            let selectedRel :string= this.GetRelName(this.linkToWit[btnIndex])
+            WorkItemFormService.getService().then( async (service1) => {
+                let tempDoc: Array<documentBuild> = [];
+                let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
+                if (this.includeLinks){                
+                    this.CreateLinks(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)            
+                }
+                else if(this.includeAttachments){                 
+                    this.CreateAttachment(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)                
+                }
+                else if (selectedRel != ""){                
+                    this.CreateRelatoin(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)                  
+                }
+            })
         });
+    }
+    private CreateLinks(id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){ 
+        service1.getWorkItemRelations().then((relations) =>{
+            let filteredRelations: Array<WorkItemRelation> = new Array<WorkItemRelation>(); 
+            relations.forEach( rel => {
+                if (rel.rel != "ArtifactLink"){
+                    if (rel.rel == "System.LinkTypes.Related-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Reverse"){
+                        rel.rel = "System.LinkTypes.Related"
+                    }
+                    filteredRelations.push(rel)
+                    tempDoc.push({ op: "add", path: "/relations/-", value: { rel: rel.rel, url: rel.url } });          
+                }               
+            })
+            if(this.includeAttachments){
+                this.CreateAttachment(id,btnIndex,selectedRel,filteredRelations,newWorkItem,document,service1,tempDoc)
+            }
+            else{
+                this.CreateRelatoin(id,btnIndex,selectedRel,filteredRelations,newWorkItem,document,service1,tempDoc)
+            }
+        })
+    }
+    private CreateAttachment(id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){ 
+        //let x: WorkItemOptions;
+        service1.getWorkItemAttachments().then((wI) =>{
+            // build list of relation not include Parent\Child
+            this.CreateRelatoin(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)
+        })        
+    }
+    private CreateRelatoin (id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){            
+        let typeName = this.ConvertRelName(selectedRel);
+        //tempDoc  = []; 
+        this.client.getWorkItem(+id).then((workitem) => {           
+            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: typeName, url: workitem.url } })             
+        }).then(() => {
+            document = tempDoc;
+            this.client.updateWorkItem(document, newWorkItem.id).then(() => {
+                WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+                    service.openWorkItem(newWorkItem.id)
+                })
+            });
+        });
+    
+        // if (id == "") {    
+        //     // need to add the list from links and attachments                                   
+        //     let rel: WorkItemRelation = {
+        //         attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
+        //         rel: selectedRel,
+        //         url: newWorkItem.url
+        //     }
+        //     relations.push(rel);
+        // }
+        // else {
+        //     let tempDoc: Array<documentBuild> = []; 
+        //     this.client.getWorkItem(+id).then((workitem) => {
+        //         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: this.ConvertRelName(selectedRel), url: workitem.url } })
+        //     }).then(() => {
+        //         document = tempDoc;  // test the new use
+        //         this.client.updateWorkItem(document, newWorkItem.id);//.then(() => {
+        //             // WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+        //             //     service.openWorkItem(newWorkItem.id)
+        //             // })
+        //         //});
+        //     });
+        // }         
+        // service1.addWorkItemRelations(relations).then(() => {
+        //     WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+        //         service.openWorkItem(newWorkItem.id)
+        //     })
+        // });
+
+    }
+    private GetRelName (TypeName: string){
+        switch (TypeName) { 
+            case null: {
+                TypeName = "";
+                break;
+            }
+            case "Child": {
+                TypeName = "System.LinkTypes.Hierarchy-Forward";
+                break;
+            }
+            case "Duplicate Of": {
+                TypeName = "System.LinkTypes.Duplicate-Reverse";
+                break;
+            }
+            case "Successor": {
+                TypeName = "System.LinkTypes.Dependency";
+                break;
+            }
+            case "Related": {
+                TypeName = "System.LinkTypes.Related";
+                break;
+            }
+            case "Tests": {
+                TypeName = "Microsoft.VSTS.Common.TestedBy-Reverse";
+                break;
+            }
+            case "Affects": {
+                TypeName = "Microsoft.VSTS.Common.Affects-Forward";
+                break;
+            }
+        }
+        return TypeName
+    }
+    private ConvertRelName (TypeName: string){
+        switch (TypeName) { 
+            case "System.LinkTypes.Hierarchy-Forward": {
+                TypeName = "System.LinkTypes.Hierarchy-Reverse";
+                break;
+            }
+            case "Microsoft.VSTS.Common.Affects-Forward": {
+                TypeName = "Microsoft.VSTS.Common.Affects-Reverse";
+                break;
+            }
+            case "System.LinkTypes.Duplicate-Reverse": {
+                TypeName = "System.LinkTypes.Duplicate-Forward";
+                break;
+            }
+            case "Microsoft.VSTS.Common.TestedBy-Reverse": {
+                TypeName = "Microsoft.VSTS.Common.TestedBy-Forward";
+                break;
+            }
+        }
+        return TypeName
     }
     private NotABug(btnIndex:number) {
         WorkItemFormService.getService().then(

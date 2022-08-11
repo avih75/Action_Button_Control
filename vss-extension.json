@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.220",
+    "version": "1.2.0",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -170,7 +170,7 @@
                         },
                         "validation": {
                             "dataType": "String",
-                            "isRequired": false
+                            "isRequired": true
                         }
                     },
                     {
@@ -208,9 +208,44 @@
                         }
                     },
                     {
-                        "id": "LinkToParent",
-                        "name": "Create Child Link",
-                        "description": "Mark if you want it to be linked to the parent",
+                        "id": "LinkToWit",
+                        "name": "Create Link",
+                        "description": "link lists set the linked type to the new work item. seperated by comma , (Child/Duplicate Of/Predecessor/Related/Tests)",
+                        "type": "TextArea",
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "BuyPass",
+                        "name": "Use ByPass for values",
+                        "description": "Help set values that not in the rules, works only with users that have bypass permission",
+                        "inputMode": "CheckBox",
+                        "validation": {
+                            "dataType": "Boolean"
+                        }
+                    },
+                    {
+                        "id": "IncludeLinks",
+                        "name": "Include Links",
+                        "description": "copy the linked items accept of child and parent (change them to related)",
+                        "inputMode": "CheckBox",
+                        "validation": {
+                            "dataType": "Boolean"
+                        }
+                    },
+                    {
+                        "id": "IncludeAttachments",
+                        "name": "Include Attachments",
+                        "description": "copy the attachments items",
                         "inputMode": "CheckBox",
                         "validation": {
                             "dataType": "Boolean"
