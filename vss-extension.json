@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "Action-Button-Control",
-    "version": "1.1.136",
+    "version": "1.2.3",
     "name": "Action Button Control",
     "scopes": [
         "vso.work",
@@ -80,6 +80,14 @@
         },
         {
             "path": "configActionButton.html",
+            "addressable": true
+        },
+        {
+            "path": "widgetActionButton.html",
+            "addressable": true
+        },
+        {
+            "path": "widgetConfiguration.html",
             "addressable": true
         }
     ],
@@ -162,7 +170,7 @@
                         },
                         "validation": {
                             "dataType": "String",
-                            "isRequired": false
+                            "isRequired": true
                         }
                     },
                     {
@@ -200,9 +208,44 @@
                         }
                     },
                     {
-                        "id": "LinkToParent",
-                        "name": "Create Child Link",
-                        "description": "Mark if you want it to be linked to the parent",
+                        "id": "LinkToWit",
+                        "name": "Create Link",
+                        "description": "link lists set the linked type to the new work item. seperated by comma , (Child/Duplicate Of/Predecessor/Related/Tests)",
+                        "type": "TextArea",
+                        "properties": {
+                            "workItemFieldTypes": [
+                                "Integer",
+                                "Double",
+                                "String"
+                            ]
+                        },
+                        "validation": {
+                            "dataType": "String",
+                            "isRequired": true
+                        }
+                    },
+                    {
+                        "id": "BuyPass",
+                        "name": "Use ByPass for values",
+                        "description": "Help set values that not in the rules, works only with users that have bypass permission",
+                        "inputMode": "CheckBox",
+                        "validation": {
+                            "dataType": "Boolean"
+                        }
+                    },
+                    {
+                        "id": "IncludeLinks",
+                        "name": "Include Links",
+                        "description": "copy the linked items accept of child and parent (change them to related)",
+                        "inputMode": "CheckBox",
+                        "validation": {
+                            "dataType": "Boolean"
+                        }
+                    },
+                    {
+                        "id": "IncludeAttachments",
+                        "name": "Include Attachments",
+                        "description": "copy the attachments items",
                         "inputMode": "CheckBox",
                         "validation": {
                             "dataType": "Boolean"
@@ -222,6 +265,48 @@
                 "name": "Action Button",
                 "uri": "configActionButton.html",
                 "order": 99
+            }
+        },
+        {
+            "id": "ButtonsWidget",
+            "type": "ms.vss-dashboards-web.widget",
+            "targets": [
+                "ms.vss-dashboards-web.widget-catalog",
+                ".ActionButtonWidget.Configuration"
+            ],
+            "properties": {
+                "name": "Action Button Widget",
+                "description": "Add action button",
+                "catalogIconUrl": "img/CatalogIcon.png",
+                "previewImageUrl": "img/preview.png",
+                "uri": "widgetActionButton.html",
+                "isNameConfigurable": true,
+                "supportedSizes": [{
+                    "rowSpan": 1,
+                    "columnSpan": 1
+                }, {
+                    "rowSpan": 2,
+                    "columnSpan": 1
+                }, {
+                    "rowSpan": 1,
+                    "columnSpan": 2
+                }, {
+                    "rowSpan": 2,
+                    "columnSpan": 2
+                }],
+                "supportedScopes": ["project_team"]
+            }
+        },
+        {
+            "id": "ActionButtonWidget.Configuration",
+            "type": "ms.vss-dashboards-web.widget-configuration",
+            "targets": [
+                "ms.vss-dashboards-web.widget-configuration"
+            ],
+            "properties": {
+                "name": "ActionButtonWidget Configuration",
+                "description": "Configures ActionButtonWidget",
+                "uri": "widgetConfiguration.html"
             }
         }
     ]

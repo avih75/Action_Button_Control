@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/VSS.SDK.min.js"></script>
+    <script type="text/javascript">
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformStyles: true
+        });
+        VSS.require(["scripts/appWidgetConfiguration"], function() {
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <fieldset>
+            <label class="label">Buttons: </label>
+            <div>
+                <ul id="list">
+
+                </ul>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Button Title</label>
+                        </td>
+                        <td>
+                            <textarea id="buttonTitle"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Button Function</label>
+                        </td>
+                        <td>
+                            <textarea id="buttonAction"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Data Infos</label>
+                        </td>
+                        <td>
+                            <textarea id="buttonWit"></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <button id="addNewButton">+</button>
+            </div>
+        </fieldset>
+    </div>
+</body>
+
+</html>

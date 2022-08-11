@@ -1,7 +1,6 @@
-import { Controller } from "./control";
+import { WorkitemController } from "./workitemControl";
 import { IWorkItemLoadedArgs } from "TFS/WorkItemTracking/ExtensionContracts";
-import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
-import { VssConnection } from "VSS/Service";
+import { WorkItemFormService } from "TFS/WorkItemTracking/Services"; 
 
 // save on ctr + s
 $(window).bind("keydown", function (event: JQueryEventObject) {
@@ -13,12 +12,12 @@ $(window).bind("keydown", function (event: JQueryEventObject) {
     }
 });
 
-var control: Controller;
+var control: WorkitemController;
 
 var provider = () => {
     return {
         onLoaded: (workItemLoadedArgs: IWorkItemLoadedArgs) => {
-            control = new Controller();
+            control = new WorkitemController();
             VSS.resize(); 
         },
     };

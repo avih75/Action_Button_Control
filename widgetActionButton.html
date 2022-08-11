@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="scripts/VSS.SDK.min.js"></script>
+    <script type="text/javascript">
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformStyles: true
+        });
+        VSS.require(["scripts/appWidget"], function() {
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: medium;
+            padding: 5px;
+            color: white;
+        }
+        
+        .aToButton {
+            background-color: blue;
+            border: 1px solid #CCCCCC;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget">
+        <h4 class="title" style="margin-left: 15px;">Actions</h4>
+        <div id="buttons-container"></div>
+    </div>
+</body>
+
+</html>
