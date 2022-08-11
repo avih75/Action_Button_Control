@@ -2,7 +2,7 @@ import { WorkItemFormService } from "TFS/WorkItemTracking/Services";
 import { JsonPatchDocument } from "VSS/WebApi/Contracts";
 import RestClient = require("TFS/WorkItemTracking/RestClient");
 import WorkItemService = require("TFS/WorkItemTracking/Services");
-import { WorkItem, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
+import { WorkItem, WorkItemExpand, WorkItemRelation } from "TFS/WorkItemTracking/Contracts";
 import { GetCommand } from "./StorageHelper"; 
 export class documentBuild {
     op: string;
@@ -160,91 +160,57 @@ export class Model {
         document = tempDoc; 
         let workItemType: string = (this.workItemTypes[btnIndex]!=null && this.workItemTypes[btnIndex] != "")? this.workItemTypes[btnIndex] : "Child";
         this.client.createWorkItem(document, this.targetProject, workItemType, null, this.buyPass).then(async (newWorkItem) => {
-            let selectedRel :string= this.GetRelName(this.linkToWit[btnIndex])
-            WorkItemFormService.getService().then( async (service1) => {
-                let tempDoc: Array<documentBuild> = [];
-                let relations: Array<WorkItemRelation> = new Array<WorkItemRelation>();
-                if (this.includeLinks){                
-                    this.CreateLinks(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)            
+            this.CreateAddes(id,btnIndex,newWorkItem); 
+        });
+    }    
+    private CreateAddes(id: string,btnIndex: number,newWorkItem){ 
+        let tempDoc: Array<documentBuild> = [];
+        let selectedRel :string= this.GetRelName(this.linkToWit[btnIndex])        
+        this.client.getWorkItem(+id,null,null,WorkItemExpand.All).then((workitem) => {                  
+            if (this.includeLinks){                
+                this.CreateLinks(tempDoc,workitem)            
+            }
+            if(this.includeAttachments){                 
+                this.CreateAttachment(tempDoc,workitem)                
+            }
+            if (selectedRel != ""){                
+                let typeName = this.ConvertRelName(selectedRel);                   
+                tempDoc.push({ op: "add", path: "/relations/-", value: {rel: typeName, url: workitem.url}});                
+            } 
+            this.CreateAdded(newWorkItem,tempDoc);
+        })          
+    }    
+    private CreateLinks(tempDoc: Array<documentBuild>,workItem:WorkItem){ 
+        let filteredRelations: Array<WorkItemRelation> = new Array<WorkItemRelation>(); 
+        workItem.relations.forEach( rel => {
+            if (rel.rel != "ArtifactLink"){
+                if (rel.rel == "System.LinkTypes.Related-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Reverse"){
+                    rel.rel = "System.LinkTypes.Related"
                 }
-                else if(this.includeAttachments){                 
-                    this.CreateAttachment(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)                
-                }
-                else if (selectedRel != ""){                
-                    this.CreateRelatoin(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)                  
-                }
+                filteredRelations.push(rel)
+                tempDoc.push({ op: "add", path: "/relations/-", value: { rel: rel.rel, url: rel.url } });          
+            }               
+        })      
+    }
+    private CreateAttachment(tempDoc: Array<documentBuild>,workItem:WorkItem){ 
+        // let filteredAttachments: Array<WorkItemRelation> = new Array<WorkItemRelation>(); 
+        // workItem.attachments.forEach( attach => {
+        //     if (attach.rel != "ArtifactLink"){
+        //         if (attach.rel == "System.LinkTypes.Related-Forward" || attach.rel == "System.LinkTypes.Hierarchy-Forward" || attach.rel == "System.LinkTypes.Hierarchy-Reverse"){
+        //             attach.rel = "System.LinkTypes.Related"
+        //         }
+        //         filteredAttachments.push(attach)
+        //         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: rel.rel, url: rel.url } });          
+        //     }               
+        // })       
+    }
+    private CreateAdded (newWorkItem,tempDoc: Array<documentBuild>){            
+        let document: JsonPatchDocument = tempDoc;
+        this.client.updateWorkItem(document, newWorkItem.id).then(() => {
+            WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
+                service.openWorkItem(newWorkItem.id)
             })
         });
-    }
-    private CreateLinks(id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){ 
-        service1.getWorkItemRelations().then((relations) =>{
-            let filteredRelations: Array<WorkItemRelation> = new Array<WorkItemRelation>(); 
-            relations.forEach( rel => {
-                if (rel.rel != "ArtifactLink"){
-                    if (rel.rel == "System.LinkTypes.Related-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Forward" || rel.rel == "System.LinkTypes.Hierarchy-Reverse"){
-                        rel.rel = "System.LinkTypes.Related"
-                    }
-                    filteredRelations.push(rel)
-                    tempDoc.push({ op: "add", path: "/relations/-", value: { rel: rel.rel, url: rel.url } });          
-                }               
-            })
-            if(this.includeAttachments){
-                this.CreateAttachment(id,btnIndex,selectedRel,filteredRelations,newWorkItem,document,service1,tempDoc)
-            }
-            else{
-                this.CreateRelatoin(id,btnIndex,selectedRel,filteredRelations,newWorkItem,document,service1,tempDoc)
-            }
-        })
-    }
-    private CreateAttachment(id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){ 
-        //let x: WorkItemOptions;
-        service1.getWorkItemAttachments().then((wI) =>{
-            // build list of relation not include Parent\Child
-            this.CreateRelatoin(id,btnIndex,selectedRel,relations,newWorkItem,document,service1,tempDoc)
-        })        
-    }
-    private CreateRelatoin (id: string,btnIndex: number,selectedRel: string,relations: Array<WorkItemRelation>,newWorkItem,document,service1,tempDoc: Array<documentBuild>){            
-        let typeName = this.ConvertRelName(selectedRel);
-        //tempDoc  = []; 
-        this.client.getWorkItem(+id).then((workitem) => {           
-            tempDoc.push({ op: "add", path: "/relations/-", value: { rel: typeName, url: workitem.url } })             
-        }).then(() => {
-            document = tempDoc;
-            this.client.updateWorkItem(document, newWorkItem.id).then(() => {
-                WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-                    service.openWorkItem(newWorkItem.id)
-                })
-            });
-        });
-    
-        // if (id == "") {    
-        //     // need to add the list from links and attachments                                   
-        //     let rel: WorkItemRelation = {
-        //         attributes: { "isDeleted": "false", "isLocked": "false", "isNew": "false" },
-        //         rel: selectedRel,
-        //         url: newWorkItem.url
-        //     }
-        //     relations.push(rel);
-        // }
-        // else {
-        //     let tempDoc: Array<documentBuild> = []; 
-        //     this.client.getWorkItem(+id).then((workitem) => {
-        //         tempDoc.push({ op: "add", path: "/relations/-", value: { rel: this.ConvertRelName(selectedRel), url: workitem.url } })
-        //     }).then(() => {
-        //         document = tempDoc;  // test the new use
-        //         this.client.updateWorkItem(document, newWorkItem.id);//.then(() => {
-        //             // WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-        //             //     service.openWorkItem(newWorkItem.id)
-        //             // })
-        //         //});
-        //     });
-        // }         
-        // service1.addWorkItemRelations(relations).then(() => {
-        //     WorkItemService.WorkItemFormNavigationService.getService().then((service) => {
-        //         service.openWorkItem(newWorkItem.id)
-        //     })
-        // });
-
     }
     private GetRelName (TypeName: string){
         switch (TypeName) { 
